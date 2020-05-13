@@ -24,7 +24,6 @@ export class LoginPage implements OnInit {
     celular: 'test',
     pass: '123456',
     nombre: 'Test',
-    avatar: 'av-1.png'
   };
 
 
@@ -45,7 +44,7 @@ export class LoginPage implements OnInit {
 
     if (valido) {
       // navegar al tabs
-      this.navCtrl.navigateRoot('/main/tabs/tab1', { animated: true });
+      this.navCtrl.navigateRoot('/main/tabs/tab2', { animated: true });
     } else {
       // mostrar alerta de usuario y contraseña no correctos
       this.uiService.alertaInformativa('Usuario y contraseña no son correctos.');
