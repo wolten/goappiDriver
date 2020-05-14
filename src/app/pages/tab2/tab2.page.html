@@ -7,15 +7,40 @@
 
 <ion-content [fullscreen]="true">
 
+<ion-list>
+  <ion-item lines="none">
+    <ion-label  color="pink" class="ion-text-end"> Disponible </ion-label>
+    <ion-toggle color="pink" [(ngModel)]="usuario.status_drive" (ionChange)="changeDisponibilidad()"></ion-toggle>
+  </ion-item>
+</ion-list>
+
   <ion-card>
-    <ion-item class="ion-no-border" lines="none">
-      <ion-avatar slot="start">
+    <ion-card-header>
+      <ion-card-subtitle color="pink">{{ usuario.celular }}</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-item lines="none">
+      <ion-thumbnail slot="start">
         <img src="../../assets/avatars/av-4.png">
-      </ion-avatar>
-      <ion-label class="ion-no-border">
-        <h3>{{ usuario.nombre }}</h3>
-        <p>{{ usuario.celular }}</p>
+      </ion-thumbnail>
+
+      <ion-label>
+        <h1>{{ usuario.nombre }}</h1>
+
+        <!-- MOSTRANDO DISPONOBILIDAD -->
+        <ion-chip color="success" *ngIf="usuario.status_drive">
+          <ion-icon color="success" name="checkmark-circle-outline"></ion-icon>
+          <ion-label color="success">Online</ion-label>
+        </ion-chip>
+
+        <!-- MOSTRANDO DISPONOBILIDAD -->
+        <ion-chip color="pink" *ngIf="!usuario.status_drive">
+          <ion-icon color="pink" name="checkmark-circle-outline"></ion-icon>
+          <ion-label color="pink">Offline</ion-label>
+        </ion-chip>
+
       </ion-label>
+
     </ion-item>
   </ion-card>
   
@@ -23,24 +48,17 @@
 <ion-card>
   <ion-card-header>
     <ion-card-subtitle>Vehicle - Scooter</ion-card-subtitle>
-    
-    <ion-card-title>
-      <ion-item lines="none">
-        <ion-avatar slot="end">
-          <img src="../../assets/avatars/av-4.png">
-        </ion-avatar>
-        <ion-label>
-          <h1>282-SKA-9</h1>
-        </ion-label>
-
-      </ion-item>
-    
-    </ion-card-title>
   </ion-card-header>
   <ion-card-content>
-
+    <ion-item lines="none">
+      <ion-thumbnail slot="start">
+        <img src="../../assets/vehicles/scooter.png">
+      </ion-thumbnail>
+      <ion-label>
+        <h1>282-SKA-9</h1>
+      </ion-label>
+    </ion-item>
   </ion-card-content>
-
 </ion-card>
 
 

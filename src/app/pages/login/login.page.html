@@ -20,7 +20,7 @@
               <ion-list>
 
                 <ion-item>
-                  <ion-label>Email</ion-label>
+                  <ion-label>Movil</ion-label>
                   <ion-input name="celular" type="text" [(ngModel)]="loginUser.celular" required></ion-input>
                 </ion-item>
 
@@ -35,8 +35,8 @@
 
           <ion-row>
             <ion-col>
-              <ion-button type="submit" color="tertiary" shape="round">
-                Login
+              <ion-button type="submit" color="pink" shape="round">
+                Sign in
               </ion-button>
             </ion-col>
           </ion-row>
@@ -61,7 +61,7 @@
               <ion-list>
 
                 <ion-item>
-                  <ion-label>Email</ion-label>
+                  <ion-label>Movil</ion-label>
                   <ion-input name="email" type="email" [(ngModel)]="registerUser.celular" required></ion-input>
                 </ion-item>
 
@@ -81,8 +81,8 @@
 
           <ion-row>
             <ion-col>
-              <ion-button type="submit" color="tertiary" shape="round">
-                Crear usuario
+              <ion-button type="submit" color="goblue" shape="round">
+                Sign up
               </ion-button>
             </ion-col>
           </ion-row>
@@ -101,20 +101,20 @@
 </ion-content>
 
 
-<ion-footer no-border>
+<ion-footer class="ion-no-border">
   <ion-toolbar>
 
     <ion-row>
 
       <ion-col>
-        <ion-button shape="round" expand="full" size="small" fill="outline" color="tertiary"
+        <ion-button shape="round" expand="full" size="small"  color="goblue"
           (click)="mostrarRegistro()">
           Ingresar
         </ion-button>
       </ion-col>
 
       <ion-col>
-        <ion-button shape="round" expand="full" size="small" fill="outline" color="tertiary" (click)="mostrarLogin()">
+        <ion-button shape="round" expand="full" size="small" color="goblue" (click)="mostrarLogin()">
           Registrarme
         </ion-button>
       </ion-col>
