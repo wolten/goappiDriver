@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UsuarioService } from 'src/app/services/usuario.service';
 import { Usuario } from 'src/app/interfaces/interfaces';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
 
 @Component({
   selector: 'app-tab2',
@@ -9,10 +10,11 @@ import { Usuario } from 'src/app/interfaces/interfaces';
 })
 export class Tab2Page implements OnInit {
 
-  
   usuario: Usuario = {};
+  cargandoGeo = false;
 
-  constructor(private usuarioService: UsuarioService) { }
+  constructor(private usuarioService: UsuarioService,
+    private gps: Geolocation) { }
 
   ngOnInit() {
 
@@ -20,10 +22,32 @@ export class Tab2Page implements OnInit {
     console.log('TAB2: ', this.usuario);
   }
 
-  changeDisponibilidad(){
+  changeDisponibilidad()
+  {
+    if(!this.usuario.status_drive){
+      this.cargandoGeo = false;
+      return;
+    }
+    
 
-    console.log(this.usuario.status_drive);
+    this.cargandoGeo = true;
+
+    this.gps.getCurrentPosition().then((resp) => {
+      // resp.coords.latitude
+      // resp.coords.longitude
+      this.cargandoGeo = false;
+      
+      this.usuario.lat = resp.coords.latitude;
+      this.usuario.lng = resp.coords.longitude;
+      console.log('Usuario GPS:', this.usuario);
+
+
+    }).catch((error) => {
+      console.log('Error getting location', error);
+      this.cargandoGeo = false;
+    });
 
   }
+
 
 }

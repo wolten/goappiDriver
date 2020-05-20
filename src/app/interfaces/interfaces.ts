@@ -5,5 +5,9 @@ export interface Usuario {
     status?:number;
     status_drive?:number;
     tokenx?:string;
-    img_url?: string;
+    url_profile?: string;
+    pushtoken?:string;
+    lat?:number;
+    lng?:number;
+    date_nacimient?:string;
 }

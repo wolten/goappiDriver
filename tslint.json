@@ -71,6 +71,7 @@
     "one-variable-per-declaration": false,
     "component-class-suffix": [true, "Page", "Component"],
     "directive-class-suffix": true,
+    "no-trailing-whitespace": false,
     "directive-selector": [
       true,
       "attribute",

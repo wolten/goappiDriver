@@ -66,9 +66,7 @@ export class UsuarioService {
   }
 
   async cargarToken() {
-
     this.token = await this.storage.get('token') || null;
-
   }
 
   async validaToken(): Promise<boolean> {
@@ -80,7 +78,6 @@ export class UsuarioService {
       this.navCtrl.navigateRoot('/login');
       return Promise.resolve(false);
     }
-
 
     return new Promise<boolean>(resolve => {
 
