@@ -10,42 +10,49 @@
 <ion-list>
   <ion-item >
     <ion-label  color="pink"> Disponible </ion-label>
-    <ion-spinner name="lines-small" *ngIf="cargandoGeo"></ion-spinner>
+    <ion-spinner name="lines-small"></ion-spinner>
     <ion-toggle color="pink" [(ngModel)]="usuario.status_drive" (ionChange)="changeDisponibilidad()"></ion-toggle>
   </ion-item>
 </ion-list>
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-subtitle color="pink">{{ usuario.celular }}</ion-card-subtitle>
-    </ion-card-header>
+<ion-spinner name="lines-small" *ngIf="cargandoGeo"></ion-spinner>
 
-    <ion-item lines="none">
-      <ion-thumbnail slot="start">
-        <img src="../../assets/avatars/av-4.png">
-      </ion-thumbnail>
+<!-- MAPA CON POSICION ACTUAL -->
+<app-mapa [lat]="usuario.lat" [lng]="usuario.lng" *ngIf="this.usuario.lat"></app-mapa>
 
-      <ion-label>
-        <h1>{{ usuario.nombre }}</h1>
 
-        <!-- MOSTRANDO DISPONOBILIDAD -->
-        <ion-chip color="success" *ngIf="usuario.status_drive">
-          <ion-icon color="success" name="checkmark-circle-outline"></ion-icon>
-          <ion-label color="success">Online</ion-label>
-        </ion-chip>
+<!-- INFORMACION DE REPARTIDOR -->
+<ion-card>
+  <ion-card-header>
+    <ion-card-subtitle color="pink">{{ usuario.celular }}</ion-card-subtitle>
+  </ion-card-header>
 
-        <!-- MOSTRANDO DISPONOBILIDAD -->
-        <ion-chip color="pink" *ngIf="!usuario.status_drive">
-          <ion-icon color="pink" name="checkmark-circle-outline"></ion-icon>
-          <ion-label color="pink">Offline</ion-label>
-        </ion-chip>
+  <ion-item lines="none">
+    <ion-thumbnail slot="start">
+      <img src="../../assets/avatars/av-4.png">
+    </ion-thumbnail>
 
-      </ion-label>
+    <ion-label>
+      <h1>{{ usuario.nombre }}</h1>
 
-    </ion-item>
-  </ion-card>
-  
-  <!-- VEHICULO Y PLACAS -->
+      <!-- MOSTRANDO DISPONOBILIDAD -->
+      <ion-chip color="success" *ngIf="usuario.status_drive">
+        <ion-icon color="success" name="checkmark-circle-outline"></ion-icon>
+        <ion-label color="success">Online</ion-label>
+      </ion-chip>
+
+      <!-- MOSTRANDO DISPONOBILIDAD -->
+      <ion-chip color="pink" *ngIf="!usuario.status_drive">
+        <ion-icon color="pink" name="checkmark-circle-outline"></ion-icon>
+        <ion-label color="pink">Offline</ion-label>
+      </ion-chip>
+
+    </ion-label>
+
+  </ion-item>
+</ion-card>
+
+<!-- VEHICULO Y PLACAS -->
 <ion-card>
   <ion-card-header>
     <ion-card-subtitle>Vehicle - Scooter</ion-card-subtitle>

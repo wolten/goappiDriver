@@ -19,7 +19,21 @@ export class Tab2Page implements OnInit {
   ngOnInit() {
 
     this.usuario = this.usuarioService.getUsuario();
-    console.log('TAB2: ', this.usuario);
+
+    this.cargandoGeo = true;
+
+    this.gps.getCurrentPosition().then((resp) => {
+    
+      this.cargandoGeo = false;
+      this.usuario.lat = resp.coords.latitude;
+      this.usuario.lng = resp.coords.longitude;
+      console.log('GPS:', this.usuario);
+
+    }).catch((error) => {
+      console.log('Error getting location', error);
+      this.cargandoGeo = false;
+    });
+
   }
 
   changeDisponibilidad()
@@ -28,25 +42,6 @@ export class Tab2Page implements OnInit {
       this.cargandoGeo = false;
       return;
     }
-    
-
-    this.cargandoGeo = true;
-
-    this.gps.getCurrentPosition().then((resp) => {
-      // resp.coords.latitude
-      // resp.coords.longitude
-      this.cargandoGeo = false;
-      
-      this.usuario.lat = resp.coords.latitude;
-      this.usuario.lng = resp.coords.longitude;
-      console.log('Usuario GPS:', this.usuario);
-
-
-    }).catch((error) => {
-      console.log('Error getting location', error);
-      this.cargandoGeo = false;
-    });
-
   }
 
 
