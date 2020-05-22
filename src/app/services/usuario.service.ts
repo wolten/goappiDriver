@@ -29,7 +29,6 @@ export class UsuarioService {
 
   }
 
-
   login(celular : string, pass: string) {
 
     const data = { celular , pass };
@@ -111,5 +110,10 @@ export class UsuarioService {
     this.storage.clear();
     this.navCtrl.navigateRoot('/login', { animated: true });
   }
+
+
+
+
+
 
 }

@@ -9,22 +9,25 @@
 
 <ion-list>
   <ion-item >
-    <ion-label  color="pink"> Disponible </ion-label>
-    <ion-spinner name="lines-small"></ion-spinner>
-    <ion-toggle color="pink" [(ngModel)]="usuario.status_drive" (ionChange)="changeDisponibilidad()"></ion-toggle>
+    <ion-label color="success" *ngIf="usuario.status_drive" > Available </ion-label>
+    <ion-label color="tertiary" *ngIf="!usuario.status_drive"> Offline </ion-label>
+
+    <ion-spinner name="lines-small" *ngIf="cargandoGeo"></ion-spinner>
+    <ion-toggle color="success" [(ngModel)]="usuario.status_drive" (ionChange)="changeDisponibilidad()"></ion-toggle>
   </ion-item>
 </ion-list>
 
-<ion-spinner name="lines-small" *ngIf="cargandoGeo"></ion-spinner>
-
 <!-- MAPA CON POSICION ACTUAL -->
-<app-mapa [lat]="usuario.lat" [lng]="usuario.lng" *ngIf="this.usuario.lat"></app-mapa>
+<app-mapa></app-mapa>
 
 
 <!-- INFORMACION DE REPARTIDOR -->
 <ion-card>
   <ion-card-header>
-    <ion-card-subtitle color="pink">{{ usuario.celular }}</ion-card-subtitle>
+    <ion-card-subtitle color="pink">
+      <ion-icon name="star"></ion-icon> 5.0 - 
+        <ion-label>{{ usuario.celular }}</ion-label>
+      </ion-card-subtitle>
   </ion-card-header>
 
   <ion-item lines="none">

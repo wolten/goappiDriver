@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Tab 1
+      Deliveries
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -9,9 +9,56 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
+      <ion-title size="large">Deliveries</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <app-explore-container name="Tab 1 page"></app-explore-container>
+  <ion-list>
+    <ion-list-header>In progress</ion-list-header>
+    <!-- Multi-line sliding item with icon options on both sides -->
+      <ion-item (click)="acciones()">
+        <ion-label>
+          <h2># ORDER-11111</h2>
+          <p>Restaurante Chicago Chefs</p>
+          <p>#450 Av, 18sth, Illinois</p>
+        </ion-label>
+        <ion-note slot="end" color="success">
+          Collecting
+        </ion-note>
+      </ion-item>
+  </ion-list>
+
+  <br><br>
+  
+  <ion-list>
+    <ion-list-header>Pending deliveries</ion-list-header>
+    <!-- Multi-line sliding item with icon options on both sides -->
+    <ion-item-sliding *ngFor="let pedido of pedidos" >
+      <ion-item href="#">
+        <ion-label>
+          <h2># ORDER-234234</h2>
+          <p>Restaurante Chicago Chefs</p>
+          <p>#450 Av, 18sth, Illinois</p>
+        </ion-label>
+        <ion-note slot="end">
+          10:45 AM
+        </ion-note>
+      </ion-item>
+
+      <ion-item-options side="start">
+        <ion-item-option color="success">
+          <ion-icon name="checkmark-outline"></ion-icon> Accept
+        </ion-item-option>
+      </ion-item-options>
+
+      <ion-item-options side="end">
+        <ion-item-option color="danger">
+          <ion-icon name="close-outline"></ion-icon> Cancel
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+
+
+  </ion-list>
+
 </ion-content>

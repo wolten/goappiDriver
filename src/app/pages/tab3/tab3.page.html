@@ -1,17 +1,41 @@
-<ion-header [translucent]="true">
+<ion-header translucent class="ion-no-border" >
   <ion-toolbar>
-    <ion-title>
-      Tab 3
-    </ion-title>
+    <ion-buttons slot="start">
+      <ion-button>
+        <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>Profile</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="acciones()">
+        <ion-icon name="exit-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 3</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content fullscreen="true" slot="fixed">
 
-  <app-explore-container name="Tab 3 page"></app-explore-container>
+  <div class="card">
+    <div class="header">
+      <div class="avatar">
+        <img src="../../assets/avatars/av-4.png" alt="">
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="user-meta ion-text-center">
+      <h3 class="playername">{{ usuario.nombre }}</h3>
+      <h5 class="country">{{ usuario.celular }}</h5>
+      <h6 class="ranking">Current ranking: <ion-chip>
+          <ion-label>5.0</ion-label>
+        </ion-chip>
+      </h6> 
+    </div>
+  </div>
+
 </ion-content>

@@ -21,9 +21,9 @@ export class LoginPage implements OnInit {
   };
 
   registerUser: Usuario = {
-    celular: 'test',
-    pass: '123456',
-    nombre: 'Test',
+    celular: '55635249xx  ',
+    pass: 'password',
+    nombre: 'John Doe',
   };
 
 
