@@ -7,58 +7,68 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+    <!-- Refresher -->
+  <ion-refresher slot="fixed" (ionRefresh)="recargar( $event )">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">Deliveries</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <ion-list>
+  <ion-list *ngIf="deliveryActiva">
     <ion-list-header>In progress</ion-list-header>
     <!-- Multi-line sliding item with icon options on both sides -->
-      <ion-item (click)="acciones()">
+      <ion-item (click)="acciones(deliveryActiva.tokenx)">
         <ion-label>
-          <h2># ORDER-11111</h2>
-          <p>Restaurante Chicago Chefs</p>
-          <p>#450 Av, 18sth, Illinois</p>
+          <h2 color='pink'>{{ deliveryActiva.bussiness_name }}</h2>
+          <p>{{ deliveryActiva.bussiness_direccion }}</p>
         </ion-label>
-        <ion-note slot="end" color="success">
-          Collecting
+        <ion-note slot="end">
+
+          <ion-label color="pink" *ngIf="deliveryActiva.status_delivery == 1">Accepted</ion-label>
+          <ion-label color="primary" *ngIf="deliveryActiva.status_delivery == 2">Collecting</ion-label>
+          <ion-label color="secondary" *ngIf="deliveryActiva.status_delivery == 3">Collected</ion-label>
+          <ion-label color="primary" *ngIf="deliveryActiva.status_delivery == 4">In transit</ion-label>
+          <ion-label color="success" *ngIf="deliveryActiva.status_delivery == 5">Delivered</ion-label>
+
+          <ion-label color="warning" *ngIf="deliveryActiva.status_delivery == 6">Problems in <br> transit</ion-label>
+        
         </ion-note>
       </ion-item>
   </ion-list>
 
   <br><br>
   
-  <ion-list>
+  <ion-list #lista *ngIf="deliverys" >
     <ion-list-header>Pending deliveries</ion-list-header>
     <!-- Multi-line sliding item with icon options on both sides -->
-    <ion-item-sliding *ngFor="let pedido of pedidos" >
-      <ion-item href="#">
+    <ion-item-sliding *ngFor="let pedido of deliverys" >
+      <ion-item >
         <ion-label>
-          <h2># ORDER-234234</h2>
-          <p>Restaurante Chicago Chefs</p>
-          <p>#450 Av, 18sth, Illinois</p>
+          <h2>{{ pedido.bussiness_name }}</h2>
+          <p>{{  pedido.bussiness_direccion }}</p>
         </ion-label>
         <ion-note slot="end">
-          10:45 AM
+          {{ pedido.hora }}
         </ion-note>
       </ion-item>
 
-      <ion-item-options side="start">
+      <ion-item-options side="start" (click)="aceptarEntrega(pedido, pedido.tokenx)">
         <ion-item-option color="success">
           <ion-icon name="checkmark-outline"></ion-icon> Accept
         </ion-item-option>
       </ion-item-options>
 
-      <ion-item-options side="end">
-        <ion-item-option color="danger">
-          <ion-icon name="close-outline"></ion-icon> Cancel
-        </ion-item-option>
-      </ion-item-options>
     </ion-item-sliding>
 
 
   </ion-list>
 
+
+
+  
 </ion-content>

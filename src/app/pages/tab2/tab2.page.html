@@ -1,6 +1,6 @@
 <ion-header translucent="true" class="ion-no-border">
   <ion-toolbar>
-    <ion-title class="ion-text-center" color="pink">goppai</ion-title>
+    <ion-title class="ion-text-center" color="pink">Goppai</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -38,13 +38,13 @@
     <ion-label>
       <h1>{{ usuario.nombre }}</h1>
 
-      <!-- MOSTRANDO DISPONOBILIDAD -->
+      <!-- MOSTRANDO DISPONIBILIDAD -->
       <ion-chip color="success" *ngIf="usuario.status_drive">
         <ion-icon color="success" name="checkmark-circle-outline"></ion-icon>
         <ion-label color="success">Online</ion-label>
       </ion-chip>
 
-      <!-- MOSTRANDO DISPONOBILIDAD -->
+      <!-- MOSTRANDO DISPONIBILIDAD -->
       <ion-chip color="pink" *ngIf="!usuario.status_drive">
         <ion-icon color="pink" name="checkmark-circle-outline"></ion-icon>
         <ion-label color="pink">Offline</ion-label>

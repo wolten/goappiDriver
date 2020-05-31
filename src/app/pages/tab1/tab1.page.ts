@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { UsuarioService } from '../../services/usuario.service';
-import { Usuario } from '../../interfaces/interfaces';
-import { ActionSheetController } from '@ionic/angular';
-
+import { Delivery } from '../../interfaces/interfaces';
+import { ActionSheetController, NavController, IonList } from '@ionic/angular';
+import { DeliveriesService } from '../../services/deliveries.service';
+import { UiServiceService } from '../../services/ui-service.service';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-tab1',
@@ -11,20 +13,106 @@ import { ActionSheetController } from '@ionic/angular';
 })
 export class Tab1Page implements OnInit {
 
-  usuario: Usuario = {};
+  @ViewChild('lista') lista: IonList;
+  deliverys = [];
 
-  pedidos = [1,1,1,1,1];
+  deliveryActiva: Delivery; 
 
-  constructor(private usuarioService: UsuarioService, 
-              public actionSheetController: ActionSheetController) {}
+  constructor(private deliveryService: DeliveriesService, 
+              private uiService: UiServiceService,
+              public actionSheetController: ActionSheetController,
+              private navCtrl: NavController,
+              public alertCtrl: AlertController ) {}
 
-  ngOnInit(){
+  ngOnInit(){  
+    
+    this.deliveryService.getEntrega().then( resp => {
+ 
+      this.deliveryActiva = resp.deliverie; 
+      console.log('Activa', this.deliveryActiva);
 
-    this.usuario = this.usuarioService.getUsuario();
-    console.log('TAB1: ', this.usuario);
+    });
+
+    
+
+    this.loadEntregasPendientes();      
   }
 
-  async acciones() {
+  // CARGAR PEDIDOS PENDIENTES
+  loadEntregasPendientes(event?) {
+
+    this.deliveryService.getDeliverys().then( resp => {
+      this.deliverys = resp.deliverys;
+      console.log('Entregas pendientes', this.deliverys);
+    });
+
+    if (event)
+      event.target.complete();
+
+  }
+
+  // FUNCTION PARA ACEPTAR UN PEDIDO
+  async aceptarEntrega(thisDelivery:Delivery ,tokenx: string) {
+
+
+    const alert = await this.alertCtrl.create({
+      header: 'Aceptar entrega',
+      subHeader: '¿Quieres comenzar la entrega?',
+      message: 'Te llevaremos paso a paso.',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => { console.log('Cancelar'); this.lista.closeSlidingItems(); }
+        },
+        {
+          text: 'Ok',
+          handler: (blah) => {
+           
+            this.deliveryService.updateDelivery(tokenx, 1)
+              .then(resp => {
+
+                this.lista.closeSlidingItems();
+
+                if( resp['status'] == 'success' ){
+
+                  console.log('Tomamos', resp);
+                  this.deliveryActiva = resp.delivery;
+
+                  const index = this.deliverys.indexOf(thisDelivery);
+
+                  if (index > -1) {
+                    this.deliverys.splice(index, 1);
+                  }
+
+                }else{
+                    this.uiService.presentToast('Tienes una entrega en curso...');
+                }
+                
+                
+
+              }).catch(resp => {
+
+              });
+
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  // FUNCION DE RECARGAR
+  recargar(event) {
+    this.deliverys = [];
+    this.loadEntregasPendientes(event);
+  }
+
+  // ACTION SHEET PARA VER OPCIONES DE ENTREGA ACTIVA
+  async acciones(tokenx: string) {
     const actionSheet = await this.actionSheetController.create({
       header: 'Order actions',
       buttons: [{
@@ -32,6 +120,7 @@ export class Tab1Page implements OnInit {
         icon: 'eye',
         handler: () => {
           console.log('Vamos a ver el pedido');
+          this.navCtrl.navigateRoot('/delivery');
         }
       }, {
         text: 'Cancel',
@@ -44,5 +133,10 @@ export class Tab1Page implements OnInit {
     });
     await actionSheet.present();
   }
+
+
+
+
+
 
 }

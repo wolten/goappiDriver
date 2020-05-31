@@ -6,14 +6,16 @@ const routes: Routes = [
   { path: 'main',
     loadChildren: () => import('./pages/tabs/tabs.module').then(m => m.TabsPageModule),
     canLoad: [UsuarioGuard]
-    // canActivate: [ UsuarioGuard ]
   },
   {  path: 'login',  loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)  },
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'login'
-    // redirectTo: 'main/tabs/tab2'
+    redirectTo: 'main'
+  },
+  {
+    path: 'delivery',
+    loadChildren: () => import('./pages/delivery/delivery.module').then( m => m.DeliveryPageModule)
   }
 
 ];

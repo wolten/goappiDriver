@@ -17,7 +17,7 @@ export class LoginPage implements OnInit {
 
   loginUser = {
     celular: '5563524923',
-    pass: 'driver$$'
+    pass: 'bypass$$'
   };
 
   registerUser: Usuario = {
@@ -45,6 +45,7 @@ export class LoginPage implements OnInit {
     if (valido) {
       // navegar al tabs
       this.navCtrl.navigateRoot('/main/tabs/tab2', { animated: true });
+      
     } else {
       // mostrar alerta de usuario y contraseña no correctos
       this.uiService.alertaInformativa('Usuario y contraseña no son correctos.');

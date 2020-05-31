@@ -40,9 +40,9 @@ export class UsuarioService {
 
           console.log(resp);
 
-          if (resp.status == 'ok') {
+          if (resp['status'] == 'ok') {
 
-            await this.guardarToken(resp.token);
+            await this.guardarToken(resp['token']);
             resolve(true);
 
           } else {
@@ -51,18 +51,33 @@ export class UsuarioService {
             resolve(false);
           }
 
-        });
-
+        },err => {  resolve(false)  });
     });
 
   }
+  
 
+  
+  async setDisponibilidad(status: number)
+  {
+    await this.storage.set('disponibilidad', status);
+  }
+
+  async getDisponibilidad()
+  {
+    this.usuario.status_drive = await this.storage.get('disponibilidad') || 0;
+    console.log(this.usuario.status_drive);
+  }
+ 
   async guardarToken(token: string) {
 
     this.token = token;
     await this.storage.set('token', token);
-    // await this.validaToken();
+    await this.validaToken();
   }
+
+
+
 
   async cargarToken() {
     this.token = await this.storage.get('token') || null;
@@ -85,11 +100,8 @@ export class UsuarioService {
       this.http.get(`${URL}/api/driver/man`, { headers })
         .subscribe(resp => {
 
-          console.log("Validatoken", resp);
-
-
-          if (resp.status == 'ok') {
-            this.usuario = resp.usuario;
+          if (resp['status'] == 'ok') {
+            this.usuario = resp['usuario'];
             resolve(true);
           } else {
 
@@ -104,10 +116,10 @@ export class UsuarioService {
 
   }
 
-  logout() {
+  async logout() {
     this.token = null;
     this.usuario = null;
-    this.storage.clear();
+    await this.storage.clear();
     this.navCtrl.navigateRoot('/login', { animated: true });
   }
 

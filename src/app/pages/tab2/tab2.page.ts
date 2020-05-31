@@ -17,6 +17,7 @@ export class Tab2Page implements OnInit {
   ngOnInit()
   {
     this.usuario = this.usuarioService.getUsuario();
+    this.usuarioService.getDisponibilidad();
   }
 
   changeDisponibilidad()
@@ -27,6 +28,10 @@ export class Tab2Page implements OnInit {
     }
 
     this.cargandoGeo = true;
+    this.usuarioService.setDisponibilidad(1);
+    this.cargandoGeo = false;
+
+
   }
 
 
