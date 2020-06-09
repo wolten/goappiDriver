@@ -9,8 +9,24 @@ export interface Usuario {
     pushtoken?:string;
     lat?:number;
     lng?:number;
+    today?: Delivery[];
+    $todas ?: number;
     date_nacimiento?:string;
+    vehicles ?: Vehicle[];
+    entregaEnCurso ?: Delivery;
 }
+export interface Vehicle {
+    placa ?: string;
+    marca ?:string;
+    modelo ?: string;
+    color ?: string;
+    status ?: string;
+    tokenx ?: string;
+    year ?: string;
+    vehicle_id ?:number;
+
+}
+
 export interface Producto {
     cantidad ?:string;
     nombre ?: string;

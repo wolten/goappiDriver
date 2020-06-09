@@ -15,7 +15,7 @@ export class Tab1Page implements OnInit {
 
   @ViewChild('lista') lista: IonList;
   deliverys = [];
-
+  loading   = false;
   deliveryActiva: Delivery; 
 
   constructor(private deliveryService: DeliveriesService, 
@@ -26,24 +26,32 @@ export class Tab1Page implements OnInit {
 
   ngOnInit(){  
     
+    this.loading = false;
     this.deliveryService.getEntrega().then( resp => {
  
       this.deliveryActiva = resp.deliverie; 
       console.log('Activa', this.deliveryActiva);
-
     });
-
-    
-
     this.loadEntregasPendientes();      
   }
+
+  // SEGMENTOS
+  segmentChanged(event) {
+
+    const valorSegmento = event.detail.value;
+    console.log(valorSegmento);
+
+  }
+
 
   // CARGAR PEDIDOS PENDIENTES
   loadEntregasPendientes(event?) {
 
+    this.loading = false;
     this.deliveryService.getDeliverys().then( resp => {
       this.deliverys = resp.deliverys;
       console.log('Entregas pendientes', this.deliverys);
+      this.loading = true;
     });
 
     if (event)
@@ -74,20 +82,20 @@ export class Tab1Page implements OnInit {
               .then(resp => {
 
                 this.lista.closeSlidingItems();
+                console.log('Tomamos', resp);
 
                 if( resp['status'] == 'success' ){
-
-                  console.log('Tomamos', resp);
+                  
                   this.deliveryActiva = resp.delivery;
-
                   const index = this.deliverys.indexOf(thisDelivery);
+                  if (index > -1) { this.deliverys.splice(index, 1); }
 
-                  if (index > -1) {
-                    this.deliverys.splice(index, 1);
-                  }
 
                 }else{
-                    this.uiService.presentToast('Tienes una entrega en curso...');
+                    if(resp['status_code'] ==='DRIVER-INACTIVE')
+                      this.uiService.presentToast('Change your status to available.');
+                    else
+                      this.uiService.presentToast('You have a delivery in progress.');
                 }
                 
                 

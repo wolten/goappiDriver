@@ -6,7 +6,7 @@
       </ion-button>
     </ion-buttons>
 
-    <ion-title>Profile</ion-title>
+    <ion-title color="pink">Profile</ion-title>
 
     <ion-buttons slot="end">
       <ion-button (click)="acciones()">
@@ -17,12 +17,20 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content fullscreen="true" slot="fixed">
+<ion-content>
 
-  <div class="card">
+  <ion-grid *ngIf="!usuario.status" >
+    <ion-row>
+      <ion-col class="ion-text-center">
+          <ion-label color="danger" >We are reviewing your documentation</ion-label>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- <div class="card" style="background-color: #647bba;">
     <div class="header">
       <div class="avatar">
-        <img src="../../assets/avatars/av-4.png" alt="">
+        <img [ngClass]="imgLoading? 'img-loading':''" src="{{ usuario.url_profile| imagen : usuario.tokenx }}" alt="{{ usuario.nombre }}">
       </div>
     </div>
   </div>
@@ -31,11 +39,79 @@
     <div class="user-meta ion-text-center">
       <h3 class="playername">{{ usuario.nombre }}</h3>
       <h5 class="country">{{ usuario.celular }}</h5>
-      <h6 class="ranking">Current ranking: <ion-chip>
-          <ion-label>5.0</ion-label>
-        </ion-chip>
-      </h6> 
+
+      <ion-grid>
+        <ion-row>
+          <ion-col class="ion-text-center">
+            <ion-text>Today</ion-text><br>
+            <ion-chip size="small" color="primary">
+              {{ usuario.today.length }}
+            </ion-chip>
+          </ion-col>
+          <ion-col class="ion-text-center">
+            <ion-label>Ranking:</ion-label>
+            <ion-chip color="pink">
+              <ion-label>5.0</ion-label>
+            </ion-chip>
+          </ion-col>
+          <ion-col class="ion-text-center">
+            <ion-text>All</ion-text><br>
+            <ion-chip size="small" color="success">
+              {{ usuario.todas }}
+            </ion-chip>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
     </div>
   </div>
+
+    -->
+
+  <ion-list>
+    <ion-item>
+      <ion-label (click)="uploadPhoto()">Change photo</ion-label>
+    </ion-item>
+
+  </ion-list>
+
+  <ion-grid *ngIf="usuario.status == 0">
+    <ion-row>
+      <ion-col>
+        <h1>Documents</h1>
+        <ion-progress-bar *ngIf="uploadingDocument" type="indeterminate"></ion-progress-bar>
+        <ion-list *ngFor="let cat of catalogo; let i = index">
+          <ion-item-divider>
+            <!-- <ion-checkbox slot="end" ></ion-checkbox> -->
+            <!-- <ion-radio slot="start"></ion-radio> -->
+            <!-- <ion-toggle slot="start"></ion-toggle> -->
+            <ion-label>
+              <ion-text color="primary">{{ cat.nombre }}</ion-text>
+              <p *ngIf="documento[i+1].confirmacion === 0" (click)="verDocumento(documento[i+1])">Ver</p>
+            </ion-label>
+             
+            <!-- <ion-icon name="glasses-outline" color="primary" slot="end"></ion-icon> -->
+            <ion-icon name="checkmark-done-outline" *ngIf="documento[i+1].confirmacion === 1" color="success" slot="end"></ion-icon>
+            
+            <!-- SIN CONFIRMAR -->  
+            <ion-icon (click)="uploadPhotoDocumento(cat.id)" *ngIf="documento[i+1].confirmacion === 0" name="camera-outline" color="primary" slot="end"></ion-icon>
+
+            <ion-icon name="checkmark-outline" 
+                      (click) = "confirmarDocumento(documento[i+1])"
+                      *ngIf="documento[i+1].confirmacion === 0" 
+                      color="tertiary" 
+                      slot="end"></ion-icon>
+
+          </ion-item-divider>
+          <!-- <ion-card *ngIf="documento[i+1].file_url">
+            <img src="{{ documento[i+1].file_url| imagenDocumento : documento[i+1].tokenx }}" />
+          </ion-card> -->
+        </ion-list>
+        
+      </ion-col>
+    </ion-row>
+  </ion-grid>  
+
+
 
 </ion-content>

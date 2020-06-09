@@ -1,7 +1,5 @@
 .card {
     margin: 0 auto;
-
-
     .header {
         height: 200px;
 
@@ -16,7 +14,6 @@
                 border-radius: 50%;
                 position: absolute;
                 bottom: calc(-1*(80px + 4px));
-                border: 8px solid #9Dc912;
                 background-color: #fff;
             }
         }
@@ -24,9 +21,8 @@
 }
 
 .card-body {
-    background-color: #ffffff;
     padding: 30px;
-    height: calc(100vh - (200px + 56px));
+    height: 250px;
     overflow: hidden;
 
     .user-meta {
