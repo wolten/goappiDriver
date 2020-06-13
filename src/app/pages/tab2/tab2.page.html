@@ -30,10 +30,13 @@
         </div>
       </ion-card-content>
     </ion-card>
-  </ion-grid>
+  </ion-grid>  
 
   <!-- MAPA CON POSICION ACTUAL -->
-  <app-mapa></app-mapa>
+  <app-mapa [lat]="latitud" [lng]="longitud" *ngIf="latitud && longitud"></app-mapa>
+
+
+
   <!-- TENGO USUARIO  -->
   <ion-grid *ngIf="loadingUsuario">
     <ion-row>

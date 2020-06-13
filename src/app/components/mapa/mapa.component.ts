@@ -1,7 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { Geolocation } from '@ionic-native/geolocation/ngx';
-
+import { Component, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 declare var google;
 
 @Component({
@@ -9,35 +6,24 @@ declare var google;
   templateUrl: './mapa.component.html',
   styleUrls: ['./mapa.component.scss'],
 })
-export class MapaComponent implements OnInit {
-  @Input() lat: number;
-  @Input() lng: number;
+export class MapaComponent implements AfterViewInit{
+
+  @Input() lat:  number;
+  @Input() lng:  number;
   @ViewChild('map') mapElement: ElementRef;
   map: any;
 
-  currentMapTrack = null;
-  isTracking = false;
-  trackedRoute = [];
-  positionSubscription: Subscription;
+  constructor() {}
+  
 
-
-  constructor(private geoLocation:Geolocation) { }
-
-  ngOnInit(){
-    
-    this.geoLocation.getCurrentPosition().then( pos => {
-
-      console.log('mapa.component', pos.coords.latitude, pos.coords.longitude);
-      this.addMap(pos.coords.latitude, pos.coords.longitude);
-    });
-
-
+  ngAfterViewInit(){
+    console.log('LATLNG:', this.lat, this.lng);
+    this.addMap(this.lat, this.lng);
   }
 
   addMap(lat, long) {
 
     const latLng = new google.maps.LatLng(lat, long);
-
     const mapOptions = {
       center: latLng,
       zoom: 16,
@@ -49,9 +35,8 @@ export class MapaComponent implements OnInit {
 
     this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
     this.addMarker();
-    
+  } // ADD MAPA
 
-  }
   addMarker() {
 
     const marker = new google.maps.Marker({
@@ -67,6 +52,6 @@ export class MapaComponent implements OnInit {
       infoWindow.open(this.map, marker);
     });
 
-  }
+  } // ADD MARKER
   
 }

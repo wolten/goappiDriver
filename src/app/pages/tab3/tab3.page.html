@@ -17,7 +17,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content fullscreen="true">
 
   <ion-grid *ngIf="!usuario.status" >
     <ion-row>
@@ -27,7 +27,7 @@
     </ion-row>
   </ion-grid>
 
-  <!-- <div class="card" style="background-color: #647bba;">
+  <div class="card" style="background-color: #647bba;">
     <div class="header">
       <div class="avatar">
         <img [ngClass]="imgLoading? 'img-loading':''" src="{{ usuario.url_profile| imagen : usuario.tokenx }}" alt="{{ usuario.nombre }}">
@@ -53,7 +53,7 @@
             <ion-chip color="pink">
               <ion-label>5.0</ion-label>
             </ion-chip>
-          </ion-col>
+          </ion-col> 
           <ion-col class="ion-text-center">
             <ion-text>All</ion-text><br>
             <ion-chip size="small" color="success">
@@ -66,14 +66,20 @@
     </div>
   </div>
 
-    -->
+   
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <h1>Settings</h1>
+          <ion-list>
+            <ion-item>
+              <ion-label (click)="uploadPhoto()">Change photo</ion-label>
+            </ion-item>
+          </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 
-  <ion-list>
-    <ion-item>
-      <ion-label (click)="uploadPhoto()">Change photo</ion-label>
-    </ion-item>
-
-  </ion-list>
 
   <ion-grid *ngIf="usuario.status == 0">
     <ion-row>
@@ -87,7 +93,6 @@
             <!-- <ion-toggle slot="start"></ion-toggle> -->
             <ion-label>
               <ion-text color="primary">{{ cat.nombre }}</ion-text>
-              <p *ngIf="documento[i+1].confirmacion === 0" (click)="verDocumento(documento[i+1])">Ver</p>
             </ion-label>
              
             <!-- <ion-icon name="glasses-outline" color="primary" slot="end"></ion-icon> -->
@@ -102,10 +107,10 @@
                       color="tertiary" 
                       slot="end"></ion-icon>
 
-          </ion-item-divider>
-          <!-- <ion-card *ngIf="documento[i+1].file_url">
-            <img src="{{ documento[i+1].file_url| imagenDocumento : documento[i+1].tokenx }}" />
-          </ion-card> -->
+          </ion-item-divider> 
+          <ion-card *ngIf="documento[i+1].file_url && documento[i+1].confirmacion === 0">
+            <ion-img src="{{ documento[i+1].file_url| imagenDocumento : documento[i+1].tokenx }}"></ion-img>
+          </ion-card>
         </ion-list>
         
       </ion-col>

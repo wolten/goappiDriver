@@ -17,6 +17,7 @@ export class UsuarioService {
   token: string = null;
   private vehicle: Vehicle;
   private usuario: Usuario = {};
+  playerID: string = null;
 
   constructor(private http: HttpClient,
     private storage: Storage,
@@ -131,7 +132,7 @@ export class UsuarioService {
           }).catch(err => { this.uiService.presentToast('Ooops, try again more later!.'); return resolve(false);  });
         });
 
-  }   
+  }     
 
   getUsuario() {
 
@@ -143,9 +144,10 @@ export class UsuarioService {
 
   }
 
-  login(celular : string, pass: string) {
+  async login(celular : string, pass: string) {
 
-    const data = { celular , pass };
+    await this.getPlayerID();
+    const data = { celular , pass, playerID: this.playerID };
 
     return new Promise(resolve => {
 
@@ -194,6 +196,9 @@ export class UsuarioService {
     this.token = await this.storage.get('token') || null;
   }
 
+  async getPlayerID(){
+    this.playerID = await this.storage.get('playerID') || null;
+  }
   async validaToken(): Promise<boolean> {
 
     await this.cargarToken();
