@@ -5,6 +5,7 @@ import { ActionSheetController, NavController, IonList } from '@ionic/angular';
 import { DeliveriesService } from '../../services/deliveries.service';
 import { UiServiceService } from '../../services/ui-service.service';
 import { AlertController } from '@ionic/angular';
+import { NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'app-tab1',
@@ -27,7 +28,7 @@ export class Tab1Page implements OnInit {
   ngOnInit(){  
     
     this.loading = false;
-    this.deliveryService.getEntrega().then( resp => {
+    this.deliveryService.getEntregaActiva().then( resp => {
  
       this.deliveryActiva = resp.deliverie; 
       console.log('Activa', this.deliveryActiva);
@@ -35,22 +36,22 @@ export class Tab1Page implements OnInit {
     this.loadEntregasPendientes();      
   }
 
-  // SEGMENTOS
-  segmentChanged(event) {
-
-    const valorSegmento = event.detail.value;
-    console.log(valorSegmento);
-
+  // VER ENTREGA
+  verDelivery(delivery: Delivery) {
+    console.log('Ver detalle de pedido');
+    const params: NavigationExtras = {
+      queryParams: { delivery: delivery.tokenx }
+    };
+    this.navCtrl.navigateRoot('/delivery', params);
   }
-
 
   // CARGAR PEDIDOS PENDIENTES
   loadEntregasPendientes(event?) {
 
     this.loading = false;
-    this.deliveryService.getDeliverys().then( resp => {
+    this.deliveryService.getHistory().then( resp => {
       this.deliverys = resp.deliverys;
-      console.log('Entregas pendientes', this.deliverys);
+      console.log('History', this.deliverys);
       this.loading = true;
     });
 

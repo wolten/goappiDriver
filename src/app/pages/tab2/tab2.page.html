@@ -1,19 +1,25 @@
-<ion-header translucent class="ion-no-border">
-  <ion-toolbar class="ion-text-left">
-    <ion-title color="pink">Goppai</ion-title>
+<ion-header translucent="true" class="ion-no-border">
+  <ion-toolbar class="ion-text-left transparent">
+    <ion-title color="pink">Orders Pending</ion-title>
 
     <ion-buttons slot="end">
       <ion-label color="pink" *ngIf="!usuario.status_drive"> Offline</ion-label>
-      <ion-label color="success" *ngIf="usuario.status_drive"> Online </ion-label>
-      <ion-toggle color="success" [checked]="usuario.status_drive" (ionChange)="changeDisponibilidad($event.detail)"
-        #toggleDisponibilidad></ion-toggle>
+      <ion-label color="success" *ngIf="usuario.status_drive"> Online </ion-label> &nbsp;
+      <ion-toggle color="success" [checked]="usuario.status_drive" (ionChange)="changeDisponibilidad($event.detail)" #toggleDisponibilidad></ion-toggle>
       <ion-spinner name="lines-small" *ngIf="cargandoGeo"></ion-spinner>
     </ion-buttons>
 
   </ion-toolbar>
 </ion-header>
 
-<ion-content fullscreen="true" class="background">
+<ion-content fullscreen="true" class="bg">
+  <ion-progress-bar *ngIf="!loading" type="indeterminate"></ion-progress-bar>
+
+  <!-- Refresher -->
+  <ion-refresher slot="fixed" (ionRefresh)="recargar( $event )">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
 
   <!-- CARGANDO USUARIO -->
   <ion-grid *ngIf="!loadingUsuario" class="ion-text-center">
@@ -33,129 +39,73 @@
   </ion-grid>  
 
   <!-- MAPA CON POSICION ACTUAL -->
-  <app-mapa [lat]="latitud" [lng]="longitud" *ngIf="latitud && longitud"></app-mapa>
+  <!-- <app-mapa [lat]="latitud" [lng]="longitud" *ngIf="latitud && longitud"></app-mapa> -->
 
 
 
   <!-- TENGO USUARIO  -->
-  <ion-grid *ngIf="loadingUsuario">
+  <ion-grid *ngIf="loadingUsuario" class="ion-no-padding">
     <ion-row>
       <ion-col>
-
         <ion-label color="danger" *ngIf="!usuario.status">We are reviewing your documentation</ion-label>
   
+
         <!-- SI TIENE UNA ENTREGA EN CURSO -->
-        <ion-card *ngIf="usuario.entregaEnCurso">
+        <ion-card *ngIf="deliveryActiva">
+          <img src="../../../assets/delivery_OK.png" />
           <ion-card-header>
-            <ion-card-subtitle color="pink" *ngIf="usuario.entregaEnCurso.status_delivery == 1">Delivery Accepted</ion-card-subtitle>
-            <ion-card-subtitle color="primary" *ngIf="usuario.entregaEnCurso.status_delivery == 2">Collecting</ion-card-subtitle>
-            <ion-card-subtitle color="secondary" *ngIf="usuario.entregaEnCurso.status_delivery == 3">Collected</ion-card-subtitle>
-            <ion-card-subtitle color="primary" *ngIf="usuario.entregaEnCurso.status_delivery == 4">In transit</ion-card-subtitle>
-            <ion-card-subtitle color="success" *ngIf="usuario.entregaEnCurso.status_delivery == 5">Delivered</ion-card-subtitle>
+            <ion-card-subtitle color="pink" *ngIf="deliveryActiva.status_delivery == 1">Delivery In progress</ion-card-subtitle>
+            <ion-card-subtitle color="primary" *ngIf="deliveryActiva.status_delivery == 2">Collecting</ion-card-subtitle>
+            <ion-card-subtitle color="secondary" *ngIf="deliveryActiva.status_delivery == 3">Collected</ion-card-subtitle>
+            <ion-card-subtitle color="primary" *ngIf="deliveryActiva.status_delivery == 4">In transit</ion-card-subtitle>
+            <ion-card-subtitle color="success" *ngIf="deliveryActiva.status_delivery == 5">Delivered</ion-card-subtitle>
           </ion-card-header>
 
           <ion-card-content>
-              <ion-button color="pink" expand='block' (click)="verEntrega()">View details </ion-button>
+              <ion-button  (click)="verDelivery(deliveryActiva)" color="pink" expand='block'>Continue delivery.</ion-button>
           </ion-card-content>
 
         </ion-card>
         
+        <div class="ion-text-center" *ngIf="!deliverys">
+          <br><br><br>
+          <img src="../../../assets/deliveryman_pink.png" />
+          <h4 class="text-muted">You don't have any order pending!</h4>
+        </div>
 
-        <!-- INFORMACION DE REPARTIDOR -->
-        <ion-grid *ngIf="usuario" class="ion-no-padding">
-          <ion-row>
-            <ion-col >
-              <ion-item lines="none" class="rounded-9 ion_item">
-                    <ion-avatar slot="start">
-                      <img src="{{ usuario.url_profile| imagen : usuario.tokenx }}" alt="{{ usuario.nombre }}">
-                    </ion-avatar>
-                    <ion-label class="ion-text-wrap">
-                      <ion-text color="pink"> <b>{{ usuario.nombre }}</b> </ion-text>
-                      <ion-text color="primary"> <p>{{ usuario.celular }}</p>  </ion-text>
-                    </ion-label>
-              </ion-item>
-            </ion-col>
-          </ion-row>
-        </ion-grid>
+      </ion-col>
+    </ion-row>
 
-        <!-- ESTADISTICAS -->
-        <ion-card>
+
+    <ion-row *ngIf="deliverys && loadingUsuario">
+      <ion-col>
+
+        <ion-card *ngFor="let pedido of deliverys" >
           <ion-card-header>
-            <ion-card-subtitle>Statistics </ion-card-subtitle>
-            <ion-card-title color="pink">Deliverys</ion-card-title>
+            <ion-card-subtitle class="text-big" color="primary"> {{ pedido.bussiness_name }} </ion-card-subtitle>
           </ion-card-header>
-
-          <ion-card-content>
-            <ion-grid>
-              <ion-row>
-                <ion-col class="ion-text-center">
-                  <ion-text>Today</ion-text><br>
-                  <ion-chip size="small" color="primary">
-                    {{ usuario.today.length }}
-                  </ion-chip>
-                </ion-col>
-                <ion-col class="ion-text-center">
-                  <ion-label>Ranking:</ion-label>
-                  <ion-chip color="pink">
-                    <ion-label>5.0</ion-label>
-                  </ion-chip>
-                </ion-col>
-                <ion-col class="ion-text-center">
-                  <ion-text>All</ion-text><br>
-                  <ion-chip size="small" color="success">
-                    {{ usuario.todas }}
-                  </ion-chip>
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-        
-          </ion-card-content>
-        </ion-card>
-
-        <!-- VEHICULO Y PLACAS -->
-        <ion-card *ngIf="vehicle" >
-          <ion-card-header>
-            <ion-card-subtitle>Vehicle</ion-card-subtitle>
-            <ion-card-title color="pink" *ngIf="vehicle.vehicle_id === 1">Automovil</ion-card-title>
-            <ion-card-title color="pink" *ngIf="vehicle.vehicle_id === 2">Motocycle</ion-card-title>
-            <ion-card-title color="pink" *ngIf="vehicle.vehicle_id === 3">Scooter</ion-card-title>
-            <ion-card-title color="pink" *ngIf="vehicle.vehicle_id === 4">Bicycle</ion-card-title>
-          </ion-card-header>
-
-          <ion-card-content>
             <ion-item lines="none">
-              <ion-thumbnail slot="start">
-                <img *ngIf="vehicle.vehicle_id === 2" src="../../assets/vehicles/moto.png">
-                <img *ngIf="vehicle.vehicle_id === 3" src="../../assets/vehicles/scooter.png">
-                <img *ngIf="vehicle.vehicle_id === 4" src="../../assets/vehicles/bici.png">
-                <img *ngIf="vehicle.vehicle_id === 1" src="../../assets/vehicles/auto.jpg">
-              </ion-thumbnail>
-              <ion-label>
-                <h1>{{ vehicle.placa }}</h1>
+              <img src="../../../assets/icon/bebidas.png" slot="start" width="60">
+              <ion-label class="ion-text-wrap">
+                <p> {{ pedido.entrega_short_direccion | titlecase }} </p>
+                <ion-button (click)="aceptarEntrega(pedido)" size="small" color="success">
+                  <ion-icon name="checkmark-outline"></ion-icon>
+                  Take
+                </ion-button>
+                <ion-button (click)="verDelivery(pedido)" size="small" color="goblue">
+                  <ion-icon name="information-circle-outline"></ion-icon>
+                  Detail
+                </ion-button>
               </ion-label>
             </ion-item>
 
-          </ion-card-content>
-        </ion-card>
-      
-        <ion-card *ngIf="!vehicle">
-          <ion-card-header>
-            <ion-card-subtitle> Vehicle </ion-card-subtitle>
-            <ion-card-title color="pink">Choose one</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <ion-chip *ngFor="let vehiclex of usuario.vehicles" (click)="chooseVehicle(vehiclex)">
-              <ion-avatar>
-                <img *ngIf="vehiclex.vehicle_id === 1" src="../../assets/vehicles/auto.jpg">
-                <img *ngIf="vehiclex.vehicle_id === 2" src="../../assets/vehicles/moto.png">
-                <img *ngIf="vehiclex.vehicle_id === 3" src="../../assets/vehicles/scooter.png">
-                <img *ngIf="vehiclex.vehicle_id === 4" src="../../assets/vehicles/bici.png">
-              </ion-avatar>
-              <ion-label> {{vehiclex.placa}}  </ion-label>
-            </ion-chip>  
-          </ion-card-content>
-        </ion-card>
+            <ion-row>
+              <ion-col class="ion-padding ion-text-right">
+                <ion-card-subtitle color="medium">{{ pedido.date_delivery | timeAgo }}</ion-card-subtitle>
+              </ion-col>
+            </ion-row>
 
+        </ion-card>
       </ion-col>
     </ion-row>
   </ion-grid>

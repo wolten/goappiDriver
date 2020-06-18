@@ -22,7 +22,18 @@ export class DeliveriesService {
 
 
 
+  // FUNCION PARA TRAER PEDIDOS PENDIENTES
+  async getHistory(): Promise<any> {
 
+    await this.cargarToken();
+
+    if (!this.token) {
+      this.navCtrl.navigateRoot('/login');
+    }
+    const headers = new HttpHeaders({ 'Authorization': 'Bearer ' + this.token });
+    return await this.http.get<any>(`${URL}/api/orders/history`, { headers }).toPromise();
+
+  }
 
 
   // FUNCION PARA TRAER PEDIDOS PENDIENTES
@@ -39,7 +50,7 @@ export class DeliveriesService {
   }
 
   // GET ENTREGA
-  async getEntrega(): Promise<any> {
+  async getEntregaActiva(): Promise<any> {
 
     await this.cargarToken();
 
@@ -48,6 +59,19 @@ export class DeliveriesService {
     }
     const headers = new HttpHeaders({ 'Authorization': 'Bearer ' + this.token });
     return await this.http.get<Delivery>(`${URL}/api/orders/activa`, { headers }).toPromise();
+  }
+
+  // GET ENTREGA
+  async getDelivery(tokenx: string): Promise<any> {
+
+    await this.cargarToken();
+
+    if (!this.token) {
+      this.navCtrl.navigateRoot('/login');
+    }
+
+    const headers = new HttpHeaders({ 'Authorization': 'Bearer ' + this.token });
+    return await this.http.get<Delivery>(`${URL}/api/orders/view/` + tokenx, { headers }).toPromise();
 
   }
 

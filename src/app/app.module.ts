@@ -15,7 +15,7 @@ import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { Camera } from '@ionic-native/camera/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { OneSignal } from '@ionic-native/onesignal/ngx';
-
+import { BackgroundGeolocation} from '@ionic-native/background-geolocation/ngx';
 
 
 @NgModule({
@@ -35,7 +35,8 @@ import { OneSignal } from '@ionic-native/onesignal/ngx';
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     Camera,
     FileTransfer,
-    OneSignal
+    OneSignal,
+    BackgroundGeolocation
   ],
   bootstrap: [AppComponent]
 })

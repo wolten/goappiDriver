@@ -10,7 +10,7 @@ export interface Usuario {
     lat?:number;
     lng?:number;
     today?: Delivery[];
-    $todas ?: number;
+    todas ?: number;
     date_nacimiento?:string;
     vehicles ?: Vehicle[];
     entregaEnCurso ?: Delivery;
@@ -32,6 +32,8 @@ export interface Producto {
     nombre ?: string;
     valorUnitario ?: string;
     detalle ?:string;
+    tokenp ?: string;
+    url_pic ?:string;
 }
 
 export interface Delivery
@@ -43,6 +45,7 @@ export interface Delivery
     entrega_nombre ?: string;
     entrega_nombre2 ?:string;
     entrega_direccion ?: string;
+    entrega_short_direccion?: string;
     total ?:number;
     comision ?:number;
     status ?: number;
@@ -57,5 +60,7 @@ export interface Delivery
     productos ?: Producto[];
     date_recolectado ?: string;
     date_entregado ?: string;
+    date_aceptado?: string;
+    date_delivery ?:string;
 
 }

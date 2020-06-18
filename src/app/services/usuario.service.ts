@@ -171,7 +171,6 @@ export class UsuarioService {
     });
 
   }
-    
   async setDisponibilidad(status: number): Promise<any>{
     
     await this.cargarToken();
@@ -184,18 +183,25 @@ export class UsuarioService {
 
     
   }
- 
+    async sendPosition(lat: number, lng: number): Promise<any> {
+
+    await this.cargarToken();
+
+    if (!this.token) { this.navCtrl.navigateRoot('/login'); }
+
+    const params = { lat, lng }
+    const headers = new HttpHeaders({ 'Authorization': 'Bearer ' + this.token });
+    return await this.http.post<any>(`${URL}/api/driver/refresh/coords`, params, { headers }).toPromise();
+  }
   async guardarToken(token: string) {
 
     this.token = token;
     await this.storage.set('token', token);
     await this.validaToken();
   }
-
   async cargarToken() {
     this.token = await this.storage.get('token') || null;
   }
-
   async getPlayerID(){
     this.playerID = await this.storage.get('playerID') || null;
   }
@@ -236,7 +242,6 @@ export class UsuarioService {
     });
 
   }
-
   async logout() {
     
     this.token = null;
@@ -245,12 +250,10 @@ export class UsuarioService {
     await this.storage.clear();
     this.navCtrl.navigateRoot('/login', { animated: true });
   }
-
   async setVehicle(vehicle: Vehicle): Promise<any> {
     this.vehicle = vehicle;
     await this.storage.set('vehicle', vehicle);
   }
-
   async setUsuario(usuario: Usuario){
     await this.storage.set('usuario', usuario);
   }

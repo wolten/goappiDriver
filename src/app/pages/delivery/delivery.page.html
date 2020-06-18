@@ -1,15 +1,15 @@
-<ion-header translucent class="ion-no-border">
+<ion-header translucent="true" class="ion-no-border" >
   <ion-toolbar>
 
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/main/tabs/tab1"></ion-back-button>
+      <ion-back-button defaultHref="/main/tabs/tab2"></ion-back-button>
     </ion-buttons>
 
-    <ion-title text-capitalize> {{ titulo }} </ion-title>
+    <ion-title text-capitalize color="pink"> {{ titulo }} </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content fullscreen="true" class="bg">
   <ion-grid *ngIf="!deliveryActiva" class="ion-text-center">
         <!-- Crescent -->
         <ion-spinner name="crescent"></ion-spinner>
@@ -22,11 +22,184 @@
           </div>
   </ion-grid>
  
+  <ion-grid *ngIf="deliveryActiva" class="ion-no-padding">
+ 
+
+    <!-- CONSULTA DE PEDIDO -->
+    <ion-row *ngIf="deliveryActiva.status_delivery == 0 || deliveryActiva.status_delivery == 7" >
+      <ion-col>
+        <ion-item lines="full">
+          <ion-label class="ion-text-wrap">
+            <b class="text-big">{{ deliveryActiva.bussiness_name }}</b>
+            <p>{{ deliveryActiva.fecha | date }} - {{ deliveryActiva.hora }}</p>
+          </ion-label>
+          <ion-label slot="end" class="ion-text-end">
+            <ion-text color="secondary" *ngIf="deliveryActiva.status_delivery == 0">Pending</ion-text>
+            <ion-text color="secondary" *ngIf="deliveryActiva.status_delivery == 1">Delivery In progress </ion-text>
+            <ion-text color="secondary" *ngIf="deliveryActiva.status_delivery == 2">Collecting </ion-text>
+            <ion-text color="secondary" *ngIf="deliveryActiva.status_delivery == 3">Collected </ion-text>
+            <ion-text color="secondary" *ngIf="deliveryActiva.status_delivery == 4">In transit </ion-text>
+            <ion-text color="secondary" *ngIf="deliveryActiva.status_delivery == 5">Delivered </ion-text>
+            <ion-text color="primary" *ngIf="deliveryActiva.status_delivery == 7">Complete </ion-text> <br>
+            
+            <ion-text class="text-bold" *ngIf="deliveryActiva.status_delivery == 7"> 
+              Ranking: {{ deliveryActiva.ranking }} 
+            </ion-text>
+
+          </ion-label>
+        </ion-item> <br>
+
+        <ion-row> 
+          <ion-col>
+            <ion-button (click)="viewPage(0)" size="small" expand="block" shape="rounded" color="primary">Ordered Foods</ion-button>
+          </ion-col>
+          <ion-col>
+            <ion-button (click)="viewPage(1)" size="small" expand="block" shape="rounded" color="success">More</ion-button>
+          </ion-col>
+        </ion-row>
+
+        <ion-slides class="SlideDetail" #slideDetail>
+
+          <ion-slide>
+            <ion-grid>
+              <ion-row>
+                <ion-col>
+                    <ion-item class="ion-item" lines="none" *ngFor="let producto of deliveryActiva.productos">
+                      <ion-thumbnail slot="start">
+                        <img src="{{ producto.url_pic| imagenProducto : producto.tokenp }}">
+                      </ion-thumbnail>
+                      <ion-label class="ion-text-wrap">
+                        <h3 color="pink">{{ producto.nombre | titlecase }}</h3>
+                        <p> {{ producto.detalle }}</p>
+                      </ion-label>
+                    
+                      <ion-label slot="end" class="ion-text-right">
+                        <ion-text class="text-bold"> {{ producto.valorUnitario | currency }} </ion-text>
+                        <p> x {{ producto.cantidad }} </p>
+                      </ion-label>
+                    </ion-item>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-slide>
+
+          <ion-slide>
+            <ion-grid>
+              <ion-row>
+                <ion-col>
+
+                    <ion-item lines="none">
+                      <ion-chip color="pink" slot="start">1</ion-chip>
+                      <ion-label class="ion-text-wrap">
+                        <p class="text-pink">Pick up the order</p>
+                        <ion-text>{{ deliveryActiva.bussiness_name }}</ion-text>
+                        <p>{{ deliveryActiva.bussiness_direccion | titlecase }}</p>
+                        <p class="text-bold" *ngIf="deliveryActiva.status_delivery == 7">
+                          {{ deliveryActiva.date_aceptado }}
+                        </p>
+                      </ion-label>
+                    </ion-item>
+
+                    <ion-item lines="none">
+                      <ion-chip color="pink" slot="start">2</ion-chip>
+                      <ion-label class="ion-text-wrap">
+                        <p class="text-pink">Confirm that the order is complete </p>
+                        <ion-text>{{ deliveryActiva.productos.length}} items</ion-text>
+                        <p class="text-bold" *ngIf="deliveryActiva.status_delivery == 7">
+                          {{ deliveryActiva.date_recolectado }}
+                        </p>
+                      </ion-label>
+                    </ion-item>
+                    
+                    <!-- Let's deliver the order -->
+                    <ion-item lines="none">
+                      <ion-chip color="pink" slot="start">3</ion-chip>
+                      <ion-label class="ion-text-wrap">
+                        <p class="text-pink">Let's deliver the order</p>
+                        <ion-text>{{ deliveryActiva.entrega_short_direccion | titlecase}} </ion-text>
+                      </ion-label>
+                    </ion-item>
+                    
+                    <!-- Let him know you are here-->
+                    <ion-item lines="none">
+                      <ion-chip color="pink" slot="start">4</ion-chip>
+                      <ion-label class="ion-text-wrap">
+                        <p class="text-pink">Let him know you are here</p>
+                        <ion-text *ngIf="deliveryActiva.status_delivery == 7">
+                          Ask for {{ deliveryActiva.entrega_nombre }}
+                        </ion-text>
+                        <p *ngIf="deliveryActiva.status_delivery == 7"> 
+                          {{ deliveryActiva.entrega_direccion | titlecase }}  
+                        </p>
+                      </ion-label>
+                    </ion-item>
+
+                    <!-- Let him know you are here-->
+                    <ion-item lines="none" *ngIf="deliveryActiva.status_delivery == 7">
+                      <ion-chip color="pink" slot="start">5</ion-chip>
+                      <ion-label class="ion-text-wrap">
+                        <p class="text-pink">Delivered</p>
+                        <ion-text >
+                          {{ deliveryActiva.date_entregado }}
+                        </ion-text>
+                      </ion-label>
+                    </ion-item>
+
+
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-slide>
+
+        </ion-slides>
+
+
+        <!--  TOTALES  -->
+        <ion-card class="fixed-bottom">
+          <br>
+          <ion-grid>
+            <ion-row class="p-1">
+
+              <ion-col>
+                <ion-label color="pink">
+                  <b class="text-big">Subtotal</b>
+                </ion-label>
+              </ion-col>
+              <ion-col class="ion-text-right" >
+                {{ deliveryActiva.total | currency }}
+              </ion-col>
+
+            </ion-row>
+
+            <ion-row class="p-1">
+            
+              <ion-col>
+                <ion-label color="pink">
+                  <b class="text-big">Delivery Fee</b>
+                </ion-label>
+              </ion-col>
+              <ion-col class="ion-text-right">
+                <ion-label color="success">
+                 <b class="text-big"> {{ deliveryActiva.comision | currency }} </b>
+                </ion-label>
+              </ion-col>
+            
+            </ion-row>
+
+          </ion-grid>
+        </ion-card>
+
+      </ion-col>
+    </ion-row> 
 
 
 
 
-  <ion-grid *ngIf="deliveryActiva">
+
+
+
+
+
 
     <!-- EL PEDIDO ES RECIEN ACEPTADO -->
     <ion-row *ngIf="deliveryActiva.status_delivery == 1">
@@ -43,8 +216,14 @@
             <ion-card-title>{{ deliveryActiva.bussiness_name }}</ion-card-title>
             <ion-card-content>
               {{ deliveryActiva.bussiness_direccion }} <br><br>
-          
-              <ion-button size="small" expand="block">
+
+              <ion-row>
+                <ion-col class="ion-text-center">
+                  <img src="../../../assets/icon/bussiness.png" />
+                </ion-col>
+              </ion-row>
+
+              <ion-button  expand="block">
                 <ion-icon slot="start" name="navigate"></ion-icon>
                 Open navigator
               </ion-button>
@@ -52,9 +231,15 @@
           </ion-card>
           
           <ion-card class="ion-padding">
-            <ion-card-subtitle>Order number</ion-card-subtitle>
+            <ion-card-subtitle color="pink">Order number</ion-card-subtitle>
             <ion-card-title>{{ deliveryActiva.tokenx }}</ion-card-title>
           </ion-card>
+
+          <br>
+          <br>
+          <br>
+
+
           <ion-button (click)="updateOrder( deliveryActiva.tokenx,2)" *ngIf="deliveryActiva.status_delivery==1" shape="round" expand="full" color="pink" class="btn-fixed-bottom">
             I came to the store
           </ion-button>
@@ -74,17 +259,36 @@
         </ion-item>
 
         <ion-card class="ion-padding">
-          <ion-card-subtitle color="pink">Check your delivery</ion-card-subtitle>
-          <ion-card-title>{{ deliveryActiva.bussiness_name }}</ion-card-title>
-          <ion-card-content>
-              <ion-item size="small" lines="none" *ngFor="let producto of deliveryActiva.productos"  class="ion-no-padding">
-                <ion-chip color="pink">
-                  <ion-label>{{ producto.cantidad }}</ion-label>
-                </ion-chip>
-                <ion-label> {{ producto.nombre }} </ion-label>
-              </ion-item>
+          <ion-card-header>
+            <ion-card-subtitle color="pink">Check your delivery</ion-card-subtitle>
+            <ion-card-title>{{ deliveryActiva.bussiness_name }}</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content class="ion-no-padding">
+            <ion-item class="ion-item" lines="none" *ngFor="let producto of deliveryActiva.productos" class="ion-no-padding">
+              <ion-thumbnail slot="start">
+                <img src="{{ producto.url_pic| imagenProducto : producto.tokenp }}">
+              </ion-thumbnail>
+              <ion-label class="ion-text-wrap">
+                <h3 color="pink">{{ producto.nombre | titlecase }}</h3>
+                <p> {{ producto.detalle }}</p>
+              </ion-label>
+            
+              <ion-label slot="end" class="ion-text-right">
+                <ion-text class="text-bold"> {{ producto.valorUnitario | currency }} </ion-text>
+                <p> x {{ producto.cantidad }} </p>
+              </ion-label>
+            </ion-item>
+
+              <ion-row>
+                <ion-col class="ion-text-center">
+                  <img src="../../../assets/icon/sopa.png" />
+                </ion-col>
+              </ion-row>
+
           </ion-card-content>
         </ion-card>
+
         <ion-button (click)="updateOrder( deliveryActiva.tokenx,3)" *ngIf="deliveryActiva.status_delivery==2" shape="round" expand="full" color="pink" class="btn-fixed-bottom">
           I confirm the order
         </ion-button>
@@ -108,10 +312,16 @@
             <ion-text size="small" color="pink">Address</ion-text> <br>
             <ion-text> {{ deliveryActiva.entrega_direccion }}  </ion-text> <br><br>
 
-            <ion-button size="small" expand="block">
+            <ion-button expand="block">
               <ion-icon slot="start" name="navigate"></ion-icon>
               Open navigator
             </ion-button>
+
+              <ion-row>
+                <ion-col class="ion-text-center">
+                  <img src="../../../assets/icon/entrega.png" />
+                </ion-col>
+              </ion-row>
 
           </ion-card-content>
         </ion-card>
@@ -128,7 +338,7 @@
           <ion-chip color="pink" slot="start">
             <ion-label>4</ion-label>
           </ion-chip>
-          <ion-label>Let's deliver the order</ion-label>
+          <ion-label>Tell me that you have arrived</ion-label>
         </ion-item>
     
         <ion-card class="ion-padding">
@@ -136,11 +346,16 @@
           <ion-card-title>{{ deliveryActiva.entrega_nombre }}</ion-card-title>
           <ion-card-content>
             <ion-text size="small" color="pink">You can also ask for</ion-text> <br>
-            <ion-text> {{ deliveryActiva.entrega_nombre2 }} </ion-text> <br><br>
+            <ion-text color="primary" class="text-bold"> {{ deliveryActiva.entrega_nombre2 }} </ion-text> <br><br>
             
             <ion-text size="small" color="pink">Address</ion-text> <br>
-            <ion-text> {{ deliveryActiva.entrega_direccion }} </ion-text> <br><br>
-
+            <ion-text color="primary" class="text-bold">{{ deliveryActiva.entrega_direccion | titlecase }} </ion-text> <br><br>
+              
+            <ion-row>
+              <ion-col class="ion-text-center">
+                <img src="../../../assets/icon/pedido.png" />
+              </ion-col>
+            </ion-row>
     
           </ion-card-content>
         </ion-card>
@@ -153,38 +368,46 @@
     <!-- PEDIDO ENTREGADO -->
     <ion-row *ngIf="deliveryActiva.status_delivery == 5">
       <ion-col>
-    
-          <ion-card-subtitle color="success" class="ion-text-center">Congratulations!</ion-card-subtitle>
-          <ion-card-title class="text-gigant ion-text-center">Order delivered</ion-card-title>
-          
-          <ion-row class="text-gray ion-padding">
+          <ion-row class="ion-padding">
             <ion-col class="ion-text-center">
+              <ion-card-title class="text-gigant" color="primary">Order delivered</ion-card-title>
               <ion-text color="pink">You win</ion-text> <br>
-              <ion-card-title class="text-gigant3x ion-text-center" color="dark"> {{ deliveryActiva.total |  currency:'USD' }}</ion-card-title>
+
+              <ion-card-title class="text-gigant3x ion-text-center" color="dark"> 
+                {{ deliveryActiva.comision |  currency:'USD' }}
+              </ion-card-title>
               <ion-text size="small" class="ion-text-center" color="secondary">
                 <b>{{ deliveryActiva.comision |  currency:'USD' }}</b>(Goppai)
               </ion-text>
+
             </ion-col>
           </ion-row>
 
 
-            <br><br> 
+          <ion-row>
+            <ion-col class="ion-no-padding">
+              
+              <ion-item lines="full">
+                <ion-label class="ion-text-wrap">
+                  <p class="text-pink">You picked up order on</p>
+                  <ion-text class="text-big" color="primary"> {{ deliveryActiva.bussiness_name }} </ion-text>
+                  <p>{{ deliveryActiva.bussiness_direccion | titlecase }}</p>
+                  <ion-text size="small" color="tertiary">{{ deliveryActiva.date_recolectado  | timeAgo }}</ion-text>
+                </ion-label>
+              </ion-item> <br>
 
-            <ion-text color="pink" size="small">You picked up order on</ion-text>
-            <ion-card-title class="text-gigant" color="dark"> {{ deliveryActiva.bussiness_name }} </ion-card-title>
-            <ion-text size="small">{{ deliveryActiva.bussiness_direccion }}</ion-text>
-            <br>
+              <ion-item lines="full">
+                <ion-label class="ion-text-wrap">
+                  <p class="text-pink">You delivered to</p>
+                  <ion-text class="text-big" color="primary"> {{ deliveryActiva.entrega_nombre}}</ion-text>
+                  <p>{{ deliveryActiva.entrega_direccion | titlecase }}</p>
+                  <ion-text size="small" color="tertiary">{{ deliveryActiva.date_entregado  | timeAgo }}</ion-text>
+                </ion-label>
+              </ion-item>
 
-            <ion-text size="small" color="primary">{{ deliveryActiva.date_recolectado }}</ion-text>
-            <br><br><br>
 
-            <ion-text color="pink" size="small">You delivered to</ion-text>
-            <ion-card-title class="text-gigant" color="dark"> {{ deliveryActiva.entrega_nombre}} </ion-card-title>
-            <ion-text size="small">{{ deliveryActiva.entrega_direccion }}</ion-text> 
-            <br>
-
-            <ion-text size="small" color="primary">{{ deliveryActiva.date_entregado }}</ion-text>
-            <br>
+            </ion-col>
+          </ion-row>
 
 
 
@@ -196,11 +419,31 @@
     </ion-row>
 
 
-
-
-
-
   </ion-grid>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <ion-grid *ngIf="horror">
+    <ion-row>
+      <ion-col class="ion-text-center">
+        <h1>Oops, try later!</h1>
+        <img src="../../../assets/delivery_OK2.png" >
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 
 </ion-content>

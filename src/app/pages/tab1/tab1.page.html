@@ -1,34 +1,11 @@
-<ion-header translucent class="ion-no-border">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button>
-        <ion-icon slot="icon-only" name="chevron-back-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-
-    <ion-title color="pink">Deliveries</ion-title>
-
-
+<ion-header translucent ="true" class="ion-no-border">
+  <ion-toolbar class="transparent">
+    <ion-title color="pink">History</ion-title>
   </ion-toolbar>
 </ion-header>
 
 
-<ion-content [fullscreen]="true"> 
-  <!-- Default Segment -->
-  <ion-segment (ionChange)="segmentChanged($event)" color="pink">
-  
-    <ion-segment-button value="pending" layout="icon-start">
-      <ion-icon name="hourglass-outline"></ion-icon>
-      <ion-label>Pending</ion-label>
-    </ion-segment-button>
-  
-    <ion-segment-button value="history" layout="icon-start">
-      <ion-icon name="time-outline"></ion-icon>
-      <ion-label>History</ion-label>
-    </ion-segment-button>
-   
-  
-  </ion-segment>
+<ion-content [fullscreen]="true" class="bg"> 
 
     <!-- Refresher -->
   <ion-refresher slot="fixed" (ionRefresh)="recargar( $event )">
@@ -52,62 +29,27 @@
   </ion-grid>
 
   <ion-grid class="ion-no-margin ion-no-padding">
-    <ion-row *ngIf="deliveryActiva && loading" >
-      <ion-col>
-        <ion-list>
-          <ion-list-header color="pink">In progress</ion-list-header>
-          <!-- Multi-line sliding item with icon options on both sides -->
-            <ion-item (click)="acciones(deliveryActiva.tokenx)">
-              <ion-label>
-                <h2 color='pink'>{{ deliveryActiva.bussiness_name }}</h2>
-                <p>{{ deliveryActiva.bussiness_direccion }}</p>
-              </ion-label>
-              <ion-note slot="end">
-      
-                <ion-label color="pink" *ngIf="deliveryActiva.status_delivery == 1">Accepted</ion-label>
-                <ion-label color="primary" *ngIf="deliveryActiva.status_delivery == 2">Collecting</ion-label>
-                <ion-label color="secondary" *ngIf="deliveryActiva.status_delivery == 3">Collected</ion-label>
-                <ion-label color="primary" *ngIf="deliveryActiva.status_delivery == 4">In transit</ion-label>
-                <ion-label color="success" *ngIf="deliveryActiva.status_delivery == 5">Delivered</ion-label>
-      
-                <ion-label color="warning" *ngIf="deliveryActiva.status_delivery == 6">Problems in <br> transit</ion-label>
-              
-              </ion-note>
-            </ion-item>
-        </ion-list>
-      </ion-col>
-    </ion-row>
-
     <ion-row *ngIf="deliverys && loading">
       <ion-col>
-        <ion-list #lista>
-          <ion-list-header color="pink">Pending deliveries</ion-list-header>
-          <!-- Multi-line sliding item with icon options on both sides -->
-          <ion-item-sliding *ngFor="let pedido of deliverys" >
-            <ion-item >
+
+        <ion-card *ngFor="let pedido of deliverys">
+            <ion-item lines="none">
               <ion-label>
-                <h2>{{ pedido.bussiness_name }}</h2>
-                <p size="small">{{  pedido.bussiness_direccion }}</p>
+                <ion-text class="text-big"> {{ pedido.bussiness_name }} </ion-text>
+                <p class="text-pink">{{ pedido.date_delivery | date }}</p>
               </ion-label>
-              <ion-note slot="end">
-                {{ pedido.hora }}
-              </ion-note>
+              
+              <ion-button (click)="verDelivery(pedido)" slot="end" size="small" color="goblue">
+                <ion-icon name="information-circle-outline"></ion-icon>
+                Detail
+              </ion-button>
             </ion-item>
-      
-            <ion-item-options side="start" (click)="aceptarEntrega(pedido, pedido.tokenx)">
-              <ion-item-option color="success">
-                <ion-icon name="checkmark-outline"></ion-icon> Accept
-              </ion-item-option>
-            </ion-item-options>
-      
-          </ion-item-sliding>
-      
-      
-        </ion-list>
+        </ion-card>
+
+
       </ion-col>
     </ion-row>
-
-  </ion-grid>
+    </ion-grid>
 
  
 </ion-content>

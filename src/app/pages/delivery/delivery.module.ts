@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { DeliveryPageRoutingModule } from './delivery-routing.module';
 
 import { DeliveryPage } from './delivery.page';
+import { PipesModule } from '../../pipes/pipes.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    DeliveryPageRoutingModule
+    DeliveryPageRoutingModule,
+    PipesModule
   ],
   declarations: [DeliveryPage]
 })

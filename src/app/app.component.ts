@@ -5,6 +5,13 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { OneSignal } from '@ionic-native/onesignal/ngx';
 import { Storage } from '@ionic/storage';
+import { BackgroundGeolocation, BackgroundGeolocationConfig, BackgroundGeolocationEvents, BackgroundGeolocationResponse } from '@ionic-native/background-geolocation/ngx';
+import { environment } from 'src/environments/environment';
+import { UsuarioService } from './services/usuario.service';
+import { BackgroundGeolocationError } from '../../plugins/cordova-plugin-background-geolocation/www/BackgroundGeolocation';
+
+
+declare var window;
 
 @Component({
   selector: 'app-root',
@@ -18,7 +25,9 @@ export class AppComponent {
     private statusBar: StatusBar,
     private oneSignal: OneSignal,
     private storage: Storage,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private backgroundGeolocation: BackgroundGeolocation,
+    private usuarioService: UsuarioService
   ) {
     this.initializeApp();
   }
@@ -30,8 +39,39 @@ export class AppComponent {
 
       if (this.platform.is('cordova')) {
         this.setupPush();
-      }
 
+        // BACKGROUND GEOLOCATION
+        const config: BackgroundGeolocationConfig = {
+          notificationTitle: 'Goppai Delivery',
+          notificationText: 'Tracking enabled',
+          desiredAccuracy: 10,
+          stationaryRadius: 20,
+          distanceFilter: 30,
+          debug: true, //  enable this hear sounds for background-geolocation life-cycle.
+          stopOnTerminate: false, // enable this to clear background location settings when the app terminates
+        };
+
+        this.backgroundGeolocation.configure(config).then(() => {
+
+            this.backgroundGeolocation.on(BackgroundGeolocationEvents.location)
+            .subscribe((location: BackgroundGeolocationResponse) => {
+              console.log('Background Geolocation: ',location);
+              this.usuarioService.sendPosition(location.latitude, location.longitude);
+
+              // IF YOU DON'T, ios will CRASH YOUR APP for spending too much time in the background.
+              this.backgroundGeolocation.finish(); // FOR IOS ONLY
+            });
+
+          this.backgroundGeolocation.on(BackgroundGeolocationEvents.error)
+            .subscribe((error)  => {
+            console.log('[ERROR] BackgroundGeolocation error:', error);
+          });
+
+          }); // END OF CONFIGURE BACKGROUND - GEOLOCATION
+
+      } // END OF VALIDACION DE PLATAFORMA CORRIENDO
+      window.app = this;
+       
     });
   }
 

@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
 import { UiServiceService } from 'src/app/services/ui-service.service';
-import { NavController, AlertController } from '@ionic/angular';
+import { NavController, AlertController, IonSlides } from '@ionic/angular';
 import { Delivery } from 'src/app/interfaces/interfaces';
-import { IfStmt } from '@angular/compiler';
+import { ActivatedRoute, Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-delivery',
@@ -13,40 +14,72 @@ import { IfStmt } from '@angular/compiler';
 export class DeliveryPage implements OnInit {
 
   deliveryActiva: Delivery; 
+  titulo = 'Order detail';
+  tokenx: any = null;
+  horror = false;
   
-  titulo = "Let's start";
-  
+  @ViewChild('slideDetail') slides: IonSlides;
+
   constructor(private deliveryService: DeliveriesService,
               private uiService: UiServiceService,
               private navCtrl: NavController,
-              public alertCtrl: AlertController ) { }
+              public alertCtrl: AlertController,
+              private route: ActivatedRoute,
+              private router: Router) { 
 
+              this.horror = false;
+                this.route.queryParams.subscribe( params =>{
+                  if(params && params.delivery){
+                    this.tokenx = params.delivery;
+                    console.log('DATA:', this.tokenx);
+                  }
+                });
+              }
 
   ngOnInit(){
+   
+    if (this.tokenx === null){
+          this.deliveryService.getEntregaActiva().then(  resp => {
+          
+            if(resp['status'] === 'error'){  
+              this.navCtrl.navigateRoot('/main');
+            
+            }else{
+                      this.deliveryActiva = resp.deliverie;
+                      if(this.deliveryActiva.status_delivery === 7){
 
-    this.deliveryService.getEntrega().then(  resp => {
-      
-      
-      if(resp['status'] == 'error')
-      {  
-        this.navCtrl.navigateRoot('/main');
-      }else{
-                this.deliveryActiva = resp.deliverie;
-                if(this.deliveryActiva.status_delivery === 7){
+                        this.navCtrl.navigateRoot('/main');
+                      
+                      }else{
+                        
+                        this.deliveryActiva.productos = resp.productos;
+                        console.log('Activa', this.deliveryActiva);
+                      }
+            }
 
-                  this.navCtrl.navigateRoot('/main');
-                
-                }else{
-                  
-                  this.deliveryActiva.productos = resp.productos;
-                  console.log('Activa', this.deliveryActiva);
-                }
-      }
+          });
+    }else{
 
-    });
+      this.deliveryService.getDelivery(this.tokenx).then(resp => {  
+
+        this.deliveryActiva = resp.deliverie;
+        this.deliveryActiva.productos = resp.productos;
+        console.log('Activa', this.deliveryActiva);
+
+      }).catch( error =>{
+        console.log('Ocurrio un horror');
+        this.horror=true;
+        this.deliveryActiva={};
+      });  
+    }
 
   }
 
+  viewPage(page: number){
+    this.slides.lockSwipes(false);
+    this.slides.slideTo(page);
+    this.slides.lockSwipes(true);
+  }
 
   async updateOrder(tokenx: string, statusDelivery:number) {
 

@@ -4,7 +4,7 @@ import { Usuario } from '../../interfaces/interfaces';
 import { ActionSheetController } from '@ionic/angular';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { AlertController } from '@ionic/angular';
-declare var window:any;
+declare var window;
 
 @Component({
   selector: 'app-tab3',
@@ -18,6 +18,7 @@ export class Tab3Page implements OnInit {
   documentos = [];
   catalogo   = [];
   documento  = [];
+  loading    = false;
   constructor(private usuarioService: UsuarioService, 
               public actionSheetController: ActionSheetController,
               private camera: Camera,
@@ -26,7 +27,6 @@ export class Tab3Page implements OnInit {
   ngOnInit(): void {
     this.usuario = this.usuarioService.getUsuario();
     this.getCatalogoDocumentos();
-
     console.log('TAB 3: ', this.usuario);
   }
 
@@ -81,6 +81,7 @@ export class Tab3Page implements OnInit {
         console.log('Document ', i, this.documento[i]);
       }
       this.uploadingDocument = false;
+      this.loading = true;
     }); // GET DOCUMENTS    
 
   }
@@ -168,6 +169,7 @@ export class Tab3Page implements OnInit {
         role: 'destructive',
         handler: () => {
           console.log('BYE BYE');
+          window.app.backgroundGeolocation.stop();
           this.usuarioService.logout();
         }
       }, {
