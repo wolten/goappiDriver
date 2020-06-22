@@ -17,6 +17,10 @@ const routes: Routes = [
     path: 'delivery',
     loadChildren: () => import('./pages/delivery/delivery.module').then( m => m.DeliveryPageModule),
     canLoad: [UsuarioGuard]
+  },
+  {
+    path: 'tab4',
+    loadChildren: () => import('./pages/tab4/tab4.module').then( m => m.Tab4PageModule)
   }
 ];
 

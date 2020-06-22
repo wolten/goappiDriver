@@ -14,6 +14,8 @@ import { UiServiceService } from '../../services/ui-service.service';
 export class LoginPage implements OnInit {
 
   @ViewChild('slidePrincipal', { static: true }) slides: IonSlides;
+  loading = false;
+  loadingsignup = false;
 
   loginUser = {
     celular: '5563524923',
@@ -21,9 +23,10 @@ export class LoginPage implements OnInit {
   };
 
   registerUser: Usuario = {
-    celular: '55635249xx  ',
+    celular: '5563524923',
     pass: 'password',
     nombre: 'John Doe',
+    confirm: 'password'
   };
 
 
@@ -40,23 +43,47 @@ export class LoginPage implements OnInit {
 
     if (fLogin.invalid) { return; }
 
+    this.loading=true;
+
     const valido = await this.usuarioService.login(this.loginUser.celular, this.loginUser.pass);
 
     if (valido) {
+      this.loading = false;
       // navegar al tabs
       this.navCtrl.navigateRoot('/main/tabs/tab2', { animated: true });
       
     } else {
       // mostrar alerta de usuario y contraseña no correctos
+      this.loading = false;
       this.uiService.alertaInformativa('Usuario y contraseña no son correctos.');
     }
 
 
   }
 
-   registro(fRegistro: NgForm) {
+  async registro(fRegistro: NgForm) {
+    this.loadingsignup=true;
+    if(fRegistro.invalid){ return; }
+
+    if(this.registerUser.pass !== this.registerUser.confirm){ return; }
+
+    await this.usuarioService.register(this.registerUser.celular, this.registerUser.nombre, this.registerUser.pass)
+    .then( response =>{
+      this.loadingsignup = false;
+      console.log('Registro dijo: ', response);
+
+      if(response['status'] === 'ok'){
+        
+        this.usuarioService.guardarToken(response['token']);
+        // navegar al tabs
+        this.navCtrl.navigateRoot('/main/tabs/tab2', { animated: true });
+
+      }else{
+        this.uiService.alertaInformativa(response['message']);
+      }
 
 
+    });
 
   }
 

@@ -123,6 +123,18 @@ export class DeliveriesService {
   }
 
 
+  async calificaEntrega(tokenx: string, ranking: number, actor:string ,evalua:string): Promise<any> {
+
+    await this.cargarToken();
+    if (!this.token) {
+      this.navCtrl.navigateRoot('/login');
+    }
+
+    const params = {tokenx, ranking, actor, evalua}
+    const headers = new HttpHeaders({ 'Authorization': 'Bearer ' + this.token });
+    return await this.http.post(`${URL}/api/orders/ranking`, params, { headers }).toPromise();
+
+  }
 
 
 

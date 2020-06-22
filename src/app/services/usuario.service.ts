@@ -156,7 +156,7 @@ export class UsuarioService {
 
           console.log(resp);
 
-          if (resp['status'] == 'ok') {
+          if (resp['status'] === 'ok') {
 
             await this.guardarToken(resp['token']);
             resolve(true);
@@ -170,6 +170,12 @@ export class UsuarioService {
         },err => {  resolve(false)  });
     });
 
+  }
+  async register(celular: string, nombre: string, pass: string): Promise<any>{
+    await this.getPlayerID();
+    
+    const data = { celular, pass, nombre, playerID: this.playerID };
+    return this.http.post(`${URL}/api/driver/signup`, data).toPromise();
   }
   async setDisponibilidad(status: number): Promise<any>{
     

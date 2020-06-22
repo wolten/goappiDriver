@@ -9,6 +9,7 @@ import { BackgroundGeolocation, BackgroundGeolocationConfig, BackgroundGeolocati
 import { environment } from 'src/environments/environment';
 import { UsuarioService } from './services/usuario.service';
 import { BackgroundGeolocationError } from '../../plugins/cordova-plugin-background-geolocation/www/BackgroundGeolocation';
+import { Mensaje } from './interfaces/interfaces';
 
 
 declare var window;
@@ -19,6 +20,8 @@ declare var window;
   styleUrls: ['app.component.scss']
 })
 export class AppComponent {
+
+  arr:any;  
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
@@ -30,6 +33,7 @@ export class AppComponent {
     private usuarioService: UsuarioService
   ) {
     this.initializeApp();
+    this.arr = [];
   }
 
   initializeApp() {
@@ -84,12 +88,24 @@ export class AppComponent {
       // do something when notification is received
       
       // CON LA APLICACION ABIERTA
-      const msg = data.payload.body;
-      const title = data.payload.title;
-      const additionalData = data.payload.additionalData;
+      const msg: string = data.payload.body;
+      const title:string = data.payload.title;
+      const additionalData: any = data.payload.additionalData;
       this.showAlert(title, msg, additionalData.task);
+
+      const mensaje: Mensaje = {
+        mensaje : msg,
+        titulo : title,
+        task : additionalData.task,
+        fecha : new Date().toString()
+      };
+
+      this.guardarMensaje(mensaje);
+
+
     }); 
 
+    
     this.oneSignal.handleNotificationOpened().subscribe(data => {
       // do something when a notification is opened
 
@@ -109,6 +125,30 @@ export class AppComponent {
      });    
   }
 
+  async guardarMensaje(mensaje: Mensaje) {
+
+    console.log('Mensaje: ', JSON.stringify(mensaje));
+
+
+
+    // TRAEMOS TODOS LOS MENSAJES
+    await this.storage.get('mensajes').then( resp => {
+            
+      if (resp == null){
+        this.arr.push(mensaje);
+      }else{
+        const arrMensajes = JSON.parse(resp);
+        this.arr = arrMensajes;
+        this.arr.push(mensaje);
+      }
+      // Volver a guardar todo el arreglo
+      this.storage.set('mensajes', JSON.stringify(this.arr));
+    }) 
+    
+
+  }
+
+
 
   async showAlert(title, msg, task) {
     const alert = await this.alertCtrl.create({
@@ -116,7 +156,7 @@ export class AppComponent {
       subHeader: msg,
       buttons: [
         {
-          text: `Action: ${task}`,
+          text: `${task}`,
           handler: () => {
             // E.g: Navigate to a specific screen
             console.log('Action', task)

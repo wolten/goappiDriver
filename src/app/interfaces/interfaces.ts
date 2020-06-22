@@ -2,6 +2,7 @@ export interface Usuario {
     nombre?: string;
     celular?: string;
     pass?:string;
+    confirm ?: string;
     status?:number;
     status_drive?:number;
     tokenx?:string;
@@ -14,6 +15,7 @@ export interface Usuario {
     date_nacimiento?:string;
     vehicles ?: Vehicle[];
     entregaEnCurso ?: Delivery;
+    ranking ?: string;
 }
 export interface Vehicle {
     placa ?: string;
@@ -40,6 +42,7 @@ export interface Delivery
 {
     tokenx?:string;
     telefono ?: string;
+    bussiness_coords ?: string;
     bussiness_name ?: string;
     bussiness_direccion ?: string;
     entrega_nombre ?: string;
@@ -51,6 +54,8 @@ export interface Delivery
     status ?: number;
     status_delivery ?:number;
     ranking ?:number;
+    rank_driver_cliente ?: number;
+    rank_driver_comercio ?:number;
     driver_id ?: number;
     driver_name ?: string;
     driver_coords ?: string;
@@ -63,4 +68,11 @@ export interface Delivery
     date_aceptado?: string;
     date_delivery ?:string;
 
+}
+
+export interface Mensaje{
+    titulo ?: string;
+    mensaje ?: string;
+    task ?: any;
+    fecha ?: string;
 }

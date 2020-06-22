@@ -16,6 +16,7 @@ import { Camera } from '@ionic-native/camera/ngx';
 import { FileTransfer } from '@ionic-native/file-transfer/ngx';
 import { OneSignal } from '@ionic-native/onesignal/ngx';
 import { BackgroundGeolocation} from '@ionic-native/background-geolocation/ngx';
+import { LaunchNavigator } from '@ionic-native/launch-navigator/ngx';
 
 
 @NgModule({
@@ -26,7 +27,7 @@ import { BackgroundGeolocation} from '@ionic-native/background-geolocation/ngx';
     IonicModule.forRoot(),
     IonicStorageModule.forRoot(),
     AppRoutingModule,
-    HttpClientModule,
+    HttpClientModule
   ],
   providers: [
     StatusBar,
@@ -36,7 +37,8 @@ import { BackgroundGeolocation} from '@ionic-native/background-geolocation/ngx';
     Camera,
     FileTransfer,
     OneSignal,
-    BackgroundGeolocation
+    BackgroundGeolocation,
+    LaunchNavigator
   ],
   bootstrap: [AppComponent]
 })

@@ -1,10 +1,10 @@
 <ion-header translucent="true" class="ion-no-border" >
-  <ion-toolbar class="transparent">
+  <ion-toolbar >
     <ion-title color="pink">Profile</ion-title>
 
     <ion-buttons slot="end">
-      <ion-button (click)="acciones()">
-        <ion-icon name="exit-outline"></ion-icon>
+      <ion-button size="small" (click)="acciones()" color="pink">
+        <ion-icon name="exit-outline" slot="start"></ion-icon>
       </ion-button>
     </ion-buttons>
 
@@ -43,7 +43,8 @@
     <ion-row>
       <ion-col>
         <div class="img-avatar">
-          <img [ngClass]="imgLoading? 'img-loading':''" src="{{ usuario.url_profile| imagen : usuario.tokenx }}" alt="{{ usuario.nombre }}">
+          <img *ngIf="usuario.url_profile" [ngClass]="imgLoading? 'img-loading':''" src="{{ usuario.url_profile| imagen : usuario.tokenx }}" alt="{{ usuario.nombre }}">
+          <img *ngIf="!usuario.url_profile" [ngClass]="imgLoading? 'img-loading':''"  src="../../../assets/avatars/av_delivery.png" alt="{{ usuario.nombre }}">
         </div>
       </ion-col>
     </ion-row>
@@ -58,9 +59,8 @@
         </ion-col>
         <ion-col class="ion-text-center">
           <ion-text>Ranking:</ion-text><br>
-          <ion-chip color="success">
-            5.0
-          </ion-chip>
+          <ion-chip color="success" *ngIf="usuario.ranking"> {{ usuario.ranking }}  </ion-chip>
+          <ion-chip color="success" *ngIf="!usuario.ranking"> -</ion-chip>
         </ion-col>
         <ion-col class="ion-text-center">
           <ion-text>All</ion-text><br>
@@ -76,27 +76,40 @@
         <h1>Documents</h1>
         <ion-progress-bar *ngIf="uploadingDocument" type="indeterminate"></ion-progress-bar>
         <ion-list *ngFor="let cat of catalogo; let i = index">
+
           <ion-item-divider>
-            <!-- <ion-checkbox slot="end" ></ion-checkbox> -->
-            <!-- <ion-radio slot="start"></ion-radio> -->
-            <!-- <ion-toggle slot="start"></ion-toggle> -->
-            <ion-label>
+            <ion-label class="ion-text-wrap">
               <ion-text color="primary">{{ cat.nombre }}</ion-text>
             </ion-label>
-  
-            <!-- <ion-icon name="glasses-outline" color="primary" slot="end"></ion-icon> -->
-            <ion-icon name="checkmark-done-outline" *ngIf="documento[i+1].confirmacion === 1" color="success" slot="end">
-            </ion-icon>
-  
-            <!-- SIN CONFIRMAR -->
-            <ion-icon (click)="uploadPhotoDocumento(cat.id)" *ngIf="documento[i+1].confirmacion === 0"
+            
+            <!-- SIN DOCUMENTOS -->
+            <ion-icon 
+              (click)="uploadPhotoDocumento(cat.id)" 
+              *ngIf="!documento[i+1]"
+              name="camera-outline" 
+              color="primary" 
+              slot="end"></ion-icon>
+
+            <!-- CON DOCUMENTOS -->
+            <ion-icon 
+              name="checkmark-done-outline" 
+              *ngIf="documento[i+1] && documento[i+1].confirmacion === 1" 
+              color="success" 
+              slot="end"></ion-icon>
+              
+            <ion-icon 
+              (click)="uploadPhotoDocumento(cat.id)" 
+              *ngIf="documento[i+1] && documento[i+1].confirmacion === 0"
               name="camera-outline" color="primary" slot="end"></ion-icon>
   
-            <ion-icon name="checkmark-outline" (click)="confirmarDocumento(documento[i+1])"
-              *ngIf="documento[i+1].confirmacion === 0" color="tertiary" slot="end"></ion-icon>
+            <ion-icon 
+              name="checkmark-outline" 
+              (click)="confirmarDocumento(documento[i+1])"
+              *ngIf="documento[i+1] && documento[i+1].confirmacion === 0" color="tertiary" slot="end"></ion-icon>
   
           </ion-item-divider>
-          <ion-card *ngIf="documento[i+1].file_url && documento[i+1].confirmacion === 0">
+
+          <ion-card *ngIf="documento[i+1] && documento[i+1].file_url && documento[i+1].confirmacion === 0">
             <ion-img src="{{ documento[i+1].file_url| imagenDocumento : documento[i+1].tokenx }}"></ion-img>
           </ion-card>
         </ion-list>
@@ -120,12 +133,12 @@
 
         <ion-item class="ion_item" lines="full">
           <ion-icon name="exit-outline"  slot="start" color="danger"></ion-icon>
-          <ion-label >Logout</ion-label>
+          <ion-label (click)="acciones()" >Logout</ion-label>
         </ion-item>
 
       </ion-col>
     </ion-row>
-  
+   
   
   </ion-grid>
 

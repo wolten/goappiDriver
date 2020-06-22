@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.goppai.driver" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Goppai</name>
-    <description>An awesome app!</description>
+<widget id="com.goppai.driver" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Goppai Deliveries</name>
+    <description>A multifunctional Latino platform for users to easily transport, shop, buy and sell goods and services in order to boost the local economy.</description>
     <author email="contact@goppai.com" href="http://goppai.com/">Goppai Team</author>
     <content src="index.html" />
     <access origin="*" />
@@ -201,6 +201,9 @@
         <variable name="SMALL_ICON" value="@mipmap/ic_launcher" />
         <variable name="ALWAYS_USAGE_DESCRIPTION" value="App requires background tracking " />
         <variable name="MOTION_USAGE_DESCRIPTION" value="App requires motion detection" />
+    </plugin>
+    <plugin name="uk.co.workingedge.phonegap.plugin.launchnavigator" source="npm">
+        <variable name="GOOGLE_API_KEY_FOR_ANDROID" value="{AIzaSyA-Fsm9JS7ymRg4cKML-_MrZ_jAyBY70jY}" />
     </plugin>
     <edit-config file="*-Info.plist" mode="merge" target="NSLocationWhenInUseUsageDescription">
         <string>We use your location for full functionality of certain app features.</string>

@@ -138,11 +138,14 @@ export class Tab2Page implements OnInit {
               if(resp['status_code'] === 'STATUS-NO') {
 
                 this.uiService.presentToast('You are not authorized to start');
+                window.app.backgroundGeolocation.stop();
                 this.usuario.status_drive=0;
 
 
-              } else
+              } else {
                 this.uiService.presentToast('An error occurred, try later');
+                window.app.backgroundGeolocation.stop();
+              }
           }
       });
     

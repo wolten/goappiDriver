@@ -3,7 +3,8 @@ import { DeliveriesService } from 'src/app/services/deliveries.service';
 import { UiServiceService } from 'src/app/services/ui-service.service';
 import { NavController, AlertController, IonSlides } from '@ionic/angular';
 import { Delivery } from 'src/app/interfaces/interfaces';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { LaunchNavigator, LaunchNavigatorOptions } from '@ionic-native/launch-navigator/ngx';
 
 
 @Component({
@@ -17,6 +18,9 @@ export class DeliveryPage implements OnInit {
   titulo = 'Order detail';
   tokenx: any = null;
   horror = false;
+
+  rankNegocio = null;
+  rankCliente = null;
   
   @ViewChild('slideDetail') slides: IonSlides;
 
@@ -25,7 +29,7 @@ export class DeliveryPage implements OnInit {
               private navCtrl: NavController,
               public alertCtrl: AlertController,
               private route: ActivatedRoute,
-              private router: Router) { 
+              private launchNavigator: LaunchNavigator) { 
 
               this.horror = false;
                 this.route.queryParams.subscribe( params =>{
@@ -73,6 +77,20 @@ export class DeliveryPage implements OnInit {
       });  
     }
 
+  }
+
+  driveService(origen: string, destino: string){
+
+    console.log('Desde: ', origen, 'Hacia: ', destino)
+    const options: LaunchNavigatorOptions = {
+      start: origen
+    }
+
+    this.launchNavigator.navigate(destino, options)
+      .then(
+        success => console.log('Launched navigator'),
+        error => console.log('Error launching navigator', error)
+      );
   }
 
   viewPage(page: number){
@@ -144,5 +162,26 @@ export class DeliveryPage implements OnInit {
     await alert.present(); // PRESENTA EL ALERT
   }
 
+  async calificaNegocio(tokenx, ranking){
+     this.deliveryService.calificaEntrega(tokenx, ranking, 'driver', 'comercio').then( response => {
 
-}
+      console.log('Calificacion de comercio', response);
+       this.deliveryActiva.rank_driver_comercio = ranking;
+
+
+     });    
+  }
+
+  async calificaCliente(tokenx, ranking){
+     this.deliveryService.calificaEntrega(tokenx, ranking, 'driver', 'cliente').then( response => {
+
+      console.log('Calificacion de cliente', response);
+       this.deliveryActiva.rank_driver_cliente  = ranking;
+
+     });
+  }
+
+
+
+
+} // END OF CLASS

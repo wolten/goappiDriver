@@ -1,5 +1,5 @@
 <ion-header translucent="true" class="ion-no-border">
-  <ion-toolbar class="ion-text-left transparent">
+  <ion-toolbar class="ion-text-left">
     <ion-title color="pink">Orders Pending</ion-title>
 
     <ion-buttons slot="end">
@@ -9,7 +9,7 @@
       <ion-spinner name="lines-small" *ngIf="cargandoGeo"></ion-spinner>
     </ion-buttons>
 
-  </ion-toolbar>
+  </ion-toolbar> 
 </ion-header>
 
 <ion-content fullscreen="true" class="bg">
@@ -45,11 +45,13 @@
 
   <!-- TENGO USUARIO  -->
   <ion-grid *ngIf="loadingUsuario" class="ion-no-padding">
+    <ion-row *ngIf="!usuario.status">
+      <ion-col class="ion-text-center">
+        <ion-label color="danger" *ngIf="!usuario.status">We are reviewing your documentation</ion-label>
+      </ion-col>
+    </ion-row>
     <ion-row>
       <ion-col>
-        <ion-label color="danger" *ngIf="!usuario.status">We are reviewing your documentation</ion-label>
-  
-
         <!-- SI TIENE UNA ENTREGA EN CURSO -->
         <ion-card *ngIf="deliveryActiva">
           <img src="../../../assets/delivery_OK.png" />

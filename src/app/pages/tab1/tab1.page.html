@@ -1,5 +1,5 @@
 <ion-header translucent ="true" class="ion-no-border">
-  <ion-toolbar class="transparent">
+  <ion-toolbar>
     <ion-title color="pink">History</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -29,8 +29,8 @@
   </ion-grid>
 
   <ion-grid class="ion-no-margin ion-no-padding">
-    <ion-row *ngIf="deliverys && loading">
-      <ion-col>
+    <ion-row *ngIf="deliverys">
+      <ion-col *ngIf="loading">
 
         <ion-card *ngFor="let pedido of deliverys">
             <ion-item lines="none">
@@ -49,7 +49,16 @@
 
       </ion-col>
     </ion-row>
-    </ion-grid>
+
+
+    <ion-row *ngIf="deliverys.length == 0">
+      <ion-col class="ion-text-center">
+        <img src="../../../assets/sad.png" width="50%" />
+        <h1 class="text-pink">You don't have a history yet.</h1>
+        <p></p>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 
  
 </ion-content>
