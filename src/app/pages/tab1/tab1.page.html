@@ -5,15 +5,15 @@
 </ion-header>
 
 
-<ion-content [fullscreen]="true" class="bg"> 
+<ion-content [fullscreen]="true"> 
 
     <!-- Refresher -->
   <ion-refresher slot="fixed" (ionRefresh)="recargar( $event )">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
 
-  <ion-grid *ngIf="!loading" class="ion-text-center">
-    <ion-row>
+  <ion-grid >
+    <ion-row *ngIf="!loading" class="ion-text-center">
       <ion-col>
         <!-- Crescent -->
         <ion-spinner name="crescent"></ion-spinner>
@@ -31,22 +31,19 @@
   <ion-grid class="ion-no-margin ion-no-padding">
     <ion-row *ngIf="deliverys">
       <ion-col *ngIf="loading">
-
-        <ion-card *ngFor="let pedido of deliverys">
-            <ion-item lines="none">
-              <ion-label>
-                <ion-text class="text-big"> {{ pedido.bussiness_name }} </ion-text>
-                <p class="text-pink">{{ pedido.date_delivery | date }}</p>
-              </ion-label>
-              
-              <ion-button (click)="verDelivery(pedido)" slot="end" size="small" color="goblue">
-                <ion-icon name="information-circle-outline"></ion-icon>
-                Detail
-              </ion-button>
-            </ion-item>
-        </ion-card>
-
-
+        <ion-list>
+          <ion-item lines="full" *ngFor="let pedido of deliverys">
+            <ion-label class="ion-text-wrap">
+              <ion-text class="text-big"> {{ pedido.comercio.nombre }} </ion-text>
+              <p class="text-pink">{{ pedido.created_at | date }}</p>
+            </ion-label>
+            
+            <ion-button (click)="verDelivery(pedido)" slot="end" size="small" color="goblue">
+              <ion-icon name="information-circle-outline"></ion-icon>
+              Detail
+            </ion-button>
+          </ion-item>
+        </ion-list>
       </ion-col>
     </ion-row>
 

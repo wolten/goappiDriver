@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { UsuarioService } from '../../services/usuario.service';
-import { Usuario } from '../../interfaces/interfaces';
+import { Usuario, Vehicle } from '../../interfaces/interfaces';
 import { ActionSheetController } from '@ionic/angular';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { AlertController } from '@ionic/angular';
+import { Storage } from '@ionic/storage';
 declare var window;
 
 @Component({
@@ -19,17 +20,37 @@ export class Tab3Page implements OnInit {
   catalogo   = [];
   documento  = [];
   loading    = false;
+  vehicle: Vehicle;
+  
   constructor(private usuarioService: UsuarioService, 
               public actionSheetController: ActionSheetController,
               private camera: Camera,
+              private storage: Storage,
               public alertCtrl: AlertController, ) { }
   
   ngOnInit(): void {
     this.usuario = this.usuarioService.getUsuario();
     this.getCatalogoDocumentos();
-    console.log('TAB 3: ', this.usuario);
+
+    this.usuarioService.getVehicle().then( resp=>{
+      console.log('Vehicle[storage]', resp);
+      this.vehicle = resp;
+    });
+    
   }
 
+  // Seleccionar un vehiculo para trabajar
+  async chooseVehicle(vehicle: Vehicle) {
+    console.log('Choose: ', vehicle);
+    await this.usuarioService.setVehicle(vehicle);
+    this.vehicle = vehicle;
+
+  }
+
+  async quitVehicle(vehicle: Vehicle){
+    await this.storage.remove('vehicle');
+    this.vehicle = null;
+  }
 
   // VER documento que subimos
   async verDocumento(catalogo: any, documento: any) {

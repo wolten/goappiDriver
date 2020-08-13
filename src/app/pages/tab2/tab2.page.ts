@@ -22,7 +22,6 @@ export class Tab2Page implements OnInit {
   deliverys = [];
   loading = false;
   deliveryActiva: Delivery; 
-  @ViewChild('toggleDisponibilidad') toggleStatus: IonToggle;
   usuario: Usuario = {};
   vehicle: Vehicle;
   cargandoGeo = false;
@@ -42,11 +41,15 @@ export class Tab2Page implements OnInit {
   ngOnInit(){ 
   
     this.loadingUsuario = false;
-    
     this.loading = false;
+
+    // VEHICULO SELECCIONADO PARA COMENZAR UNA ENTREGA
+    this.usuarioService.getVehicle().then(response => {
+      this.vehicle = response;
+    });
+
     // CARGANDO ENTREGA ACTIVA
     this.deliveryService.getEntregaActiva().then(resp => {
-
       this.deliveryActiva = resp.deliverie;
       console.log('Activa', this.deliveryActiva);
     });
@@ -77,7 +80,26 @@ export class Tab2Page implements OnInit {
       }
     });
     
+  }
 
+  // CARGAR PEDIDOS PENDIENTES
+  loadEntregasPendientes(event?) {
+
+    this.loading = false;
+    this.deliveryService.getDeliverys().then(resp => {
+
+      if (resp['status'] === 'error') {
+        if (resp['status_code'] === 'NO-AUTH')
+          this.navCtrl.navigateRoot('/login');
+      }
+
+      this.deliverys = resp.deliverys;
+      console.log('Entregas pendientes', this.deliverys);
+      this.loading = true;
+    });
+
+    if (event)
+      event.target.complete();
 
   }
 
@@ -85,79 +107,20 @@ export class Tab2Page implements OnInit {
     this.viewMapa = !this.viewMapa;
   }
 
+  // 
   verDelivery(delivery: Delivery){
-    console.log('Ver detalle de pedido')
-    const params :NavigationExtras = {
-        queryParams:{ delivery : delivery.tokenx  }
-    };
-    this.navCtrl.navigateRoot('/delivery', params);    
-  }
-
-
-  async changeDisponibilidad(event: any) {
-
-    // SI NO ESTA ACTIVO
-    this.cargandoGeo = true;
-    console.log('Toggle: ', event.checked);
-
-    if(event.checked)
-      this.usuario.status_drive = 1;
-    else
-      this.usuario.status_drive = 0;
     
-    console.log('Disponibilidad: ', this.usuario.status_drive);
+    let params :NavigationExtras;
 
-    await this.usuarioService.setDisponibilidad(this.usuario.status_drive).then(resp => {
+    if(delivery.order.type === 1){
+      params = { queryParams: { delivery: delivery.order.tokenx } };
+      this.navCtrl.navigateRoot('/ondemand', params);    
 
-          if(resp['status'] === 'success') {
-            
-            if(this.usuario.status_drive === 1) {
-
-              this.uiService.presentToast('To work!!');
-              
-              window.app.backgroundGeolocation.start();
-              // WITH GEOLOCATION PLUGIN
-              // this.watch = this.geolocation.watchPosition().pipe( filter((p) => p.coords !== undefined))
-              //             .subscribe((data) => {
-              //               // data can be a set of coordinates, or an error (if an error occurred).
-              //               // data.coords.latitude
-              //               // data.coords.longitude
-              //               this.latitud  = data.coords.latitude;
-              //               this.longitud = data.coords.longitude;
-              //               console.log('WATCH: ', data.coords.latitude, data.coords.longitude);
-              //             }); 
-            
-            }else{
-              
-              // this.watch.unsubscribe(); // WITH GEOLOCATION PLUGIN
-              window.app.backgroundGeolocation.stop();
-              this.uiService.presentToast('We wait for you soon.');
-            }
-
-          }else {
-              if(resp['status_code'] === 'STATUS-NO') {
-
-                this.uiService.presentToast('You are not authorized to start');
-                window.app.backgroundGeolocation.stop();
-                this.usuario.status_drive=0;
-
-
-              } else {
-                this.uiService.presentToast('An error occurred, try later');
-                window.app.backgroundGeolocation.stop();
-              }
-          }
-      });
-    
-    this.cargandoGeo = false;
-
-  }
-
-  async chooseVehicle(vehicle: Vehicle) {
-    
-    console.log('Choose: ', vehicle);
-    await this.usuarioService.setVehicle(vehicle);
-    this.vehicle = vehicle;
+    }else{
+      
+      params = { queryParams: { delivery: delivery.tokenx } };
+      this.navCtrl.navigateRoot('/delivery', params);    
+    }
 
   }
 
@@ -201,7 +164,7 @@ export class Tab2Page implements OnInit {
 
 
 
-              }).catch(resp => {});
+              }).catch(resp => { this.uiService.presentToast('Sorry, we are undergoing maintenance.'); });
 
 
           }
@@ -212,26 +175,133 @@ export class Tab2Page implements OnInit {
     await alert.present();
   }
 
+  // CAMBIAR LA DISPONIBILIDAD DEL USUARIO
+  async changeDisponibilidad() {
+
+    // SI NO ESTA ACTIVO
+    this.cargandoGeo = true;
+    let estado;
+    if(this.usuario.status_drive === 0)
+      estado = 1;
+    else
+      estado = 0;
+    
+    console.log('Disponibilidad: ', this.usuario.status_drive);
+
+    // VEHICULO SELECCIONADO PARA COMENZAR UNA ENTREGA
+    await this.usuarioService.getVehicle().then(response => {
+      this.vehicle = response;
+    });
+
+    // CAMBIANDO DE OFFLINE A ONLINE
+    if (this.usuario.status_drive === 0){
+
+      if (this.vehicle == null) {
+        this.cargandoGeo = false;
+        this.usuario.status_drive = 0;
+        
+        this.uiService.presentToast('Select a vehicle to start');
+        return;
+
+      } else {
+
+          // SI TENEMOS ASIGNADO UN VEHICULO, PODEMOS ACTIVAR LA DISPONIBILIDAD
+          await this.usuarioService.setDisponibilidad(estado).then(resp => {
+
+            if (resp['status'] === 'success') {
+
+              if (resp['status_drive'] === 1) {
+
+                this.uiService.presentToast('To work!!');
+                this.usuario.status_drive = 1;
+                window.app.backgroundGeolocation.start();
+
+              } else {
+
+                this.usuario.status_drive = 0;
+                window.app.backgroundGeolocation.stop();
+                this.uiService.presentToast('We wait for you soon.');
+              }
+
+            } else {
+              if (resp['status_code'] === 'STATUS-NO') {
+
+                this.uiService.presentToast('You are not authorized to start');
+                window.app.backgroundGeolocation.stop();
+                this.usuario.status_drive = 0;
+
+
+              } else {
+                this.uiService.presentToast('An error occurred, try later');
+                this.usuario.status_drive = 0;
+                window.app.backgroundGeolocation.stop();
+              }
+            }
+          });
+      
+      }
+
+
+
+    // CAMBIANDO DE ONLINE A OFFLINE  
+    }else {
+
+      console.log('Cambiando de online a offline');
+      if (this.deliveryActiva) {
+
+        this.uiService.presentToast('You have a delivery in progress');
+
+      } else {
+
+        // SI TENEMOS ASIGNADO UN VEHICULO, PODEMOS ACTIVAR LA DISPONIBILIDAD
+        await this.usuarioService.setDisponibilidad(estado).then(resp => {
+
+          if (resp['status'] === 'success') {
+
+            if (resp['status_drive'] === 1) {
+
+              this.uiService.presentToast('To work!!');
+              this.usuario.status_drive = 1;
+              window.app.backgroundGeolocation.start();
+
+            } else {
+
+              this.usuario.status_drive = 0;
+              window.app.backgroundGeolocation.stop();
+              this.uiService.presentToast('We wait for you soon.');
+            }
+
+          } else {
+            if (resp['status_code'] === 'STATUS-NO') {
+
+              this.uiService.presentToast('You are not authorized to start');
+              window.app.backgroundGeolocation.stop();
+              this.usuario.status_drive = 0;
+
+
+            } else {
+              this.uiService.presentToast('An error occurred, try later');
+              this.usuario.status_drive = 0;
+              window.app.backgroundGeolocation.stop();
+            }
+          }
+        });
+      
+      }
+
+    }
+
+
+
+
+    this.cargandoGeo = false;
+
+  }
 
   // FUNCION DE RECARGAR
   recargar(event) {
     this.deliverys = [];
     this.loadEntregasPendientes(event);
-  }
-
-  // CARGAR PEDIDOS PENDIENTES
-  loadEntregasPendientes(event?) {
-
-    this.loading = false;
-    this.deliveryService.getDeliverys().then(resp => {
-      this.deliverys = resp.deliverys;
-      console.log('Entregas pendientes', this.deliverys);
-      this.loading = true;
-    });
-
-    if (event)
-      event.target.complete();
-
   }
 
 }

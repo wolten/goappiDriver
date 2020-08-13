@@ -189,14 +189,14 @@ export class UsuarioService {
 
     
   }
-    async sendPosition(lat: number, lng: number): Promise<any> {
+  async sendPosition(lat: number, lng: number): Promise<any> {
 
     await this.cargarToken();
 
     if (!this.token) { this.navCtrl.navigateRoot('/login'); }
 
     const params = { lat, lng }
-    const headers = new HttpHeaders({ 'Authorization': 'Bearer ' + this.token });
+    const headers = new HttpHeaders({ Authorization: 'Bearer ' + this.token });
     return await this.http.post<any>(`${URL}/api/driver/refresh/coords`, params, { headers }).toPromise();
   }
   async guardarToken(token: string) {
@@ -226,11 +226,11 @@ export class UsuarioService {
     return new Promise<boolean>(resolve => {
       console.log('GET USUARIO (HTTP)', this.token);
       
-      const headers = new HttpHeaders({  'Authorization': 'Bearer ' + this.token   });
+      const headers = new HttpHeaders({ Authorization: 'Bearer ' + this.token   });
       this.http.get(`${URL}/api/driver/man`, { headers })
         .subscribe(resp => {
           
-          if (resp['status'] == 'ok') {
+          if (resp['status'] === 'ok') {
             
             this.usuario = resp['usuario'];
             this.setUsuario(this.usuario);
@@ -259,6 +259,9 @@ export class UsuarioService {
   async setVehicle(vehicle: Vehicle): Promise<any> {
     this.vehicle = vehicle;
     await this.storage.set('vehicle', vehicle);
+  }
+  async getVehicle(): Promise<any>{
+    return await this.storage.get('vehicle') || null;
   }
   async setUsuario(usuario: Usuario){
     await this.storage.set('usuario', usuario);

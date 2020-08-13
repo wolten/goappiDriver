@@ -14,8 +14,7 @@ import { LaunchNavigator, LaunchNavigatorOptions } from '@ionic-native/launch-na
 })
 export class DeliveryPage implements OnInit {
 
-  deliveryActiva: Delivery; 
-  titulo = 'Order detail';
+  deliveryActiva: Delivery = {}; 
   tokenx: any = null;
   horror = false;
 
@@ -43,11 +42,11 @@ export class DeliveryPage implements OnInit {
   ngOnInit(){
    
     if (this.tokenx === null){
+
           this.deliveryService.getEntregaActiva().then(  resp => {
           
             if(resp['status'] === 'error'){  
               this.navCtrl.navigateRoot('/main');
-            
             }else{
                       this.deliveryActiva = resp.deliverie;
                       if(this.deliveryActiva.status_delivery === 7){
@@ -60,16 +59,14 @@ export class DeliveryPage implements OnInit {
                         console.log('Activa', this.deliveryActiva);
                       }
             }
-
           });
+
     }else{
 
       this.deliveryService.getDelivery(this.tokenx).then(resp => {  
-
         this.deliveryActiva = resp.deliverie;
         this.deliveryActiva.productos = resp.productos;
         console.log('Activa', this.deliveryActiva);
-
       }).catch( error =>{
         console.log('Ocurrio un horror');
         this.horror=true;
@@ -79,7 +76,54 @@ export class DeliveryPage implements OnInit {
 
   }
 
-  driveService(origen: string, destino: string){
+  async cancel(delivery: Delivery){
+
+
+    const alert = await this.alertCtrl.create({
+      header: 'Cancel delivery',
+      subHeader: 'Do you want to cancel the delivery?',
+      message: 'You can no longer reverse this action and it will affect your ranking.',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => { console.log('Actualizacion cancelada'); }
+
+        },  // END BUTTON 1
+        {
+          text: 'Ok',
+          handler: (blah) => {
+
+
+            this.deliveryService.cancel(delivery.tokenx).then(response => {
+              console.log('Cancel delivery: ', response);
+              this.navCtrl.navigateRoot('/main/tabs/tab2');
+            });
+
+
+          }
+        } // END BUTTON 2
+      ] // END ARREGLO DE BOTONES
+    }); // END OF ALERTCTRL
+
+    await alert.present(); // PRESENTA EL ALERT
+
+
+  }
+
+  driveService(delivery: Delivery){
+
+    let origen ; // = delivery.repartidor.lat + ',' + delivery.repartidor.lng;
+    let destino; // = delivery.comercio.coords;
+
+    if(delivery.status_delivery === 3){
+      origen  = delivery.comercio.coords;
+      destino = delivery.entrega_direccion; 
+    }else{
+      origen = delivery.repartidor.lat + ',' + delivery.repartidor.lng;
+      destino = delivery.comercio.coords;
+    }
 
     console.log('Desde: ', origen, 'Hacia: ', destino)
     const options: LaunchNavigatorOptions = {
@@ -132,22 +176,27 @@ export class DeliveryPage implements OnInit {
             this.deliveryService.updateDelivery(tokenx, statusDelivery).then( resp => {
 
               console.log('SERVICE RESPONSE: ', resp);
-              if(resp['status'] == 'success' )
+              if(resp['status'] === 'success' )
               {
-                if(statusDelivery == 7)
-                {
+                if(statusDelivery === 7){
+                  this.uiService.presentToast('Gracias por terminar la entrega.');
                   this.navCtrl.navigateRoot('/main/tabs/tab1');
                 }
 
-                //CONTINUAMOS
+                // CONTINUAMOS
                 this.deliveryActiva= resp.delivery;
                 this.deliveryActiva.productos = resp.productos;
 
                 console.log('DELIVERY STATUS: ', this.deliveryActiva.status_delivery);
               }else{
                 
-                if(resp['status_code']=='NO-AUTH')
-                    this.uiService.presentToast('La sesion terminó');
+                if(resp['status_code'] === 'NO-AUTH'){
+                  this.uiService.presentToast('La sesion terminó');
+                }
+                
+                if (resp['status_code'] === 'DRIVER-INACTIVE'){
+                  this.uiService.presentToast('Quita el modo OFFLINE para continuar');
+                }
               }
 
 

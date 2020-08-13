@@ -1,18 +1,20 @@
 <ion-header translucent="true" class="ion-no-border">
   <ion-toolbar class="ion-text-left">
-    <ion-title color="pink">Orders Pending</ion-title>
+    <ion-title color="pink">Goppai Deliveries</ion-title>
 
     <ion-buttons slot="end">
-      <ion-label color="pink" *ngIf="!usuario.status_drive"> Offline</ion-label>
-      <ion-label color="success" *ngIf="usuario.status_drive"> Online </ion-label> &nbsp;
-      <ion-toggle color="success" [checked]="usuario.status_drive" (ionChange)="changeDisponibilidad($event.detail)" #toggleDisponibilidad></ion-toggle>
+      <!-- <ion-label color="pink" *ngIf="!usuario.status_drive"> Offline</ion-label> -->
+      <!-- <ion-label color="success" *ngIf="usuario.status_drive"> Online </ion-label> &nbsp; -->
+      <!-- <ion-toggle color="success" [checked]="usuario.status_drive" (ionChange)="changeDisponibilidad($event.detail)" #toggleDisponibilidad></ion-toggle> -->
       <ion-spinner name="lines-small" *ngIf="cargandoGeo"></ion-spinner>
+      <ion-button (click)="changeDisponibilidad()" *ngIf="usuario.status_drive" slot="end" size="small" color="success" fill="solid"> Available</ion-button>
+      <ion-button (click)="changeDisponibilidad()" *ngIf="!usuario.status_drive" slot="end" size="small" color="danger" fill="solid"> Offline</ion-button>
     </ion-buttons>
 
   </ion-toolbar> 
 </ion-header>
 
-<ion-content fullscreen="true" class="bg">
+<ion-content fullscreen="true">
   <ion-progress-bar *ngIf="!loading" type="indeterminate"></ion-progress-bar>
 
   <!-- Refresher -->
@@ -45,14 +47,16 @@
 
   <!-- TENGO USUARIO  -->
   <ion-grid *ngIf="loadingUsuario" class="ion-no-padding">
+    
     <ion-row *ngIf="!usuario.status">
       <ion-col class="ion-text-center">
         <ion-label color="danger" *ngIf="!usuario.status">We are reviewing your documentation</ion-label>
       </ion-col>
     </ion-row>
+    
+    <!-- SI TIENE UNA ENTREGA EN CURSO -->
     <ion-row>
       <ion-col>
-        <!-- SI TIENE UNA ENTREGA EN CURSO -->
         <ion-card *ngIf="deliveryActiva">
           <img src="../../../assets/delivery_OK.png" />
           <ion-card-header>
@@ -69,7 +73,7 @@
 
         </ion-card>
         
-        <div class="ion-text-center" *ngIf="!deliverys">
+        <div class="ion-text-center" *ngIf="!deliverys || deliverys.length <= 0">
           <br><br><br>
           <img src="../../../assets/deliveryman_pink.png" />
           <h4 class="text-muted">You don't have any order pending!</h4>
@@ -78,11 +82,48 @@
       </ion-col>
     </ion-row>
 
-
     <ion-row *ngIf="deliverys && loadingUsuario">
       <ion-col>
+        <h1 class="ion-padding" *ngIf="deliverys && deliverys.length > 0">Pending deliveries</h1>
 
-        <ion-card *ngFor="let pedido of deliverys" >
+        <ion-item-sliding *ngFor="let pedido of deliverys" >
+          <!-- BOTON IZQUIERDO -->
+          <ion-item-options side="start">
+            <ion-item-option (click)="aceptarEntrega(pedido)" color="success">Start</ion-item-option>
+          </ion-item-options>
+
+          <!-- EL ITEM -->
+          <ion-item lines="full">
+            <ion-label class="ion-text-wrap">
+              <h2 class="text-bold"> {{ pedido.comercio.nombre }} </h2>
+              <ion-text color="pink" *ngIf="pedido.order.type === 1">On demand</ion-text>
+              <p *ngIf="pedido.order.type === 0">
+                {{ pedido.direccion.colonia | titlecase }}
+                {{ pedido.direccion.ciudad | titlecase }}
+                {{ pedido.direccion.estado | titlecase }}
+              </p> 
+            </ion-label> 
+            <!--FECHA DE PEDIDO -->
+            <ion-note slot="end" mode="ios" *ngIf="pedido.order.type === 0" > 
+              <ion-text color="primary"> {{ pedido.created_at | date:'MMM d' }} </ion-text>
+              <ion-text color="secondary"> {{ pedido.created_at | date:'shortTime' }} </ion-text> <br>
+            </ion-note>
+            <!--FECHA PROGRAMADA PARA ENTREGAR ONDEMAND -->
+            <ion-note slot="end" mode="ios" *ngIf="pedido.order.type === 1">
+              <ion-text color="secondary"> {{ pedido.order.programated_at | date:'MMM d' }} </ion-text> <br>
+              <ion-text color="secondary"> {{ pedido.order.programated_at | date:'shortTime' }} </ion-text> <br>
+              
+            </ion-note>
+          </ion-item>
+
+          <!-- BOTON DERECHO -->
+          <ion-item-options side="end">
+            <ion-item-option (click)="verDelivery(pedido)">View</ion-item-option>
+          </ion-item-options>
+        </ion-item-sliding>
+
+
+        <!-- <ion-card *ngFor="let pedido of deliverys" >
           <ion-card-header>
             <ion-card-subtitle class="text-big" color="primary"> {{ pedido.bussiness_name }} </ion-card-subtitle>
           </ion-card-header>
@@ -106,10 +147,14 @@
                 <ion-card-subtitle color="medium">{{ pedido.date_delivery | timeAgo }}</ion-card-subtitle>
               </ion-col>
             </ion-row>
+        </ion-card> -->
 
-        </ion-card>
+
+
+
       </ion-col>
     </ion-row>
+  
   </ion-grid>
 
 

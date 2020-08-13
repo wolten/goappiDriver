@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Storage } from '@ionic/storage';
 import { environment } from '../../environments/environment';
-import { Delivery } from '../interfaces/interfaces';
+import { Delivery, Vehicle, Order } from '../interfaces/interfaces';
 import { NavController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 
@@ -15,12 +15,54 @@ export class DeliveriesService {
   
   token: string = null;
   private deliverys: Delivery[] = [];
+  private vehicle: Vehicle;
 
   constructor(private http: HttpClient,
     private storage: Storage,
     private navCtrl: NavController) { }
 
+  // UPDATE STATUS DEL DESTINO - ON DEMAND
+  async updateStatusDeliveryDestino(token: string, status: number): Promise<any> {
 
+    await this.cargarToken();
+    if (!this.token) { this.navCtrl.navigateRoot('/login'); }
+    const headers = new HttpHeaders({ Authorization: 'Bearer ' + this.token });
+    const params = { token, status }
+    return await this.http.post(`${URL}/api/destination/update`, params, { headers }).toPromise();
+
+  }
+
+
+  // GET ENTREGA
+  async getOrder(tokenx: string): Promise<any> {
+
+    await this.cargarToken();
+    if (!this.token) {      this.navCtrl.navigateRoot('/login');    }
+    const headers = new HttpHeaders({ Authorization: 'Bearer ' + this.token });
+    return await this.http.get<Order>(`${URL}/api/orders/get/` + tokenx, { headers }).toPromise();
+
+  }
+
+
+  // ACTUALIZAR EL ESTADO DE LA ENTREGA
+  async finishOrder(token: string): Promise<any> {
+
+    await this.cargarToken();
+    await this.getVehicle();
+
+    if (!this.token) {
+      this.navCtrl.navigateRoot('/login');
+    }
+
+    if (!this.vehicle) {
+      this.navCtrl.navigateRoot('/main/tabs/tab2');
+    }
+
+    const params = { token }
+    const headers = new HttpHeaders({ Authorization: 'Bearer ' + this.token });
+    return await this.http.post(`${URL}/api/ondemand/update/delivery`, params, { headers }).toPromise();
+
+  }
 
   // FUNCION PARA TRAER PEDIDOS PENDIENTES
   async getHistory(): Promise<any> {
@@ -35,7 +77,6 @@ export class DeliveriesService {
 
   }
 
-
   // FUNCION PARA TRAER PEDIDOS PENDIENTES
   async getDeliverys(): Promise<any>{
     
@@ -49,7 +90,7 @@ export class DeliveriesService {
 
   }
 
-  // GET ENTREGA
+  // GET ENTREGA ACTIVA
   async getEntregaActiva(): Promise<any> {
 
     await this.cargarToken();
@@ -70,9 +111,14 @@ export class DeliveriesService {
       this.navCtrl.navigateRoot('/login');
     }
 
-    const headers = new HttpHeaders({ 'Authorization': 'Bearer ' + this.token });
+    const headers = new HttpHeaders({ Authorization: 'Bearer ' + this.token });
     return await this.http.get<Delivery>(`${URL}/api/orders/view/` + tokenx, { headers }).toPromise();
 
+  }
+
+  //  GET VEHICLE ACTIVE
+  async getVehicle(): Promise<any> {
+    this.vehicle = await this.storage.get('vehicle') || null;
   }
 
   // FUNCION PARA ACTUALIZAR EL ESTADO DE UNA ENTREGA
@@ -87,15 +133,13 @@ export class DeliveriesService {
 
     return new Promise(resolve => {
       
-      const params = {'tokenx': tokenx,
-                      'status_delivery': statusDelivery  }
-
-      const headers = new HttpHeaders({ 'Authorization': 'Bearer ' + this.token });
+      const params = {tokenx, statusDelivery }
+      const headers = new HttpHeaders({ Authorization: 'Bearer ' + this.token });
       this.http.post(`${URL}/api/orders/update/delivery`, params ,{ headers })
             .subscribe(resp => {
               console.log(resp);
               
-              if (resp['status'] == 'ok') {
+              if (resp['status'] === 'ok') {
                 resolve(true);
 
               } else {
@@ -106,37 +150,57 @@ export class DeliveriesService {
     });
   }
 
+  // ACTUALIZAR EL ESTADO DE LA ENTREGA
   async updateDelivery(tokenx: string, statusDelivery:number): Promise<any> {
 
     await this.cargarToken();
+    await this.getVehicle();
+
     if (!this.token) {
       this.navCtrl.navigateRoot('/login');
     }
 
+    if (!this.vehicle) {
+      this.navCtrl.navigateRoot('/main/tabs/tab3');
+    }
+
     const params = {
       'tokenx': tokenx,
-      'status_delivery': statusDelivery
+      'status_delivery': statusDelivery,
+      'vehicle_id': this.vehicle.vehicle_id
     }
     const headers = new HttpHeaders({ 'Authorization': 'Bearer ' + this.token });
     return await this.http.post(`${URL}/api/orders/update/delivery`, params, { headers }).toPromise();
 
   }
 
-
-  async calificaEntrega(tokenx: string, ranking: number, actor:string ,evalua:string): Promise<any> {
+  // CANCELAR LA ENTREGA
+  async cancel(tokenx: string): Promise<any> {
 
     await this.cargarToken();
     if (!this.token) {
       this.navCtrl.navigateRoot('/login');
     }
 
-    const params = {tokenx, ranking, actor, evalua}
+    const params = {tokenx}
+    const headers = new HttpHeaders({ 'Authorization': 'Bearer ' + this.token });
+    return await this.http.post(`${URL}/api/orders/cancel`, params, { headers }).toPromise();
+
+  }
+
+  // CALIFICAR LA ENTREGA
+  async calificaEntrega(tokenx: string, ranking: number, actor: string, evalua: string): Promise<any> {
+
+    await this.cargarToken();
+    if (!this.token) {
+      this.navCtrl.navigateRoot('/login');
+    }
+
+    const params = { tokenx, ranking, actor, evalua }
     const headers = new HttpHeaders({ 'Authorization': 'Bearer ' + this.token });
     return await this.http.post(`${URL}/api/orders/ranking`, params, { headers }).toPromise();
 
   }
-
-
 
 
 

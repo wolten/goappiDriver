@@ -11,7 +11,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content fullscreen="true" class="bg">
+<ion-content [fullscreen]="true" >
 
 
   <ion-grid *ngIf="!loading" class="ion-text-center">
@@ -39,18 +39,27 @@
     </ion-row>
   </ion-grid>
 
-  <ion-grid *ngIf="loading">
+  <ion-grid *ngIf="loading && usuario.url_profile != null">
     <ion-row>
-      <ion-col>
-        <div class="img-avatar">
-          <img *ngIf="usuario.url_profile" [ngClass]="imgLoading? 'img-loading':''" src="{{ usuario.url_profile| imagen : usuario.tokenx }}" alt="{{ usuario.nombre }}">
-          <img *ngIf="!usuario.url_profile" [ngClass]="imgLoading? 'img-loading':''"  src="../../../assets/avatars/av_delivery.png" alt="{{ usuario.nombre }}">
+      <ion-col class="ion-text-center">
+        <div >
+          <img class="img-avatar" *ngIf="usuario.url_profile" [ngClass]="imgLoading? 'img-loading':''" src="{{ usuario.url_profile| imagen : usuario.tokenx }}" alt="{{ usuario.nombre }}">
+          <img class="img-avatar" *ngIf="!usuario.url_profile" [ngClass]="imgLoading? 'img-loading':''"  src="../../../assets/avatars/av_delivery.png" alt="{{ usuario.nombre }}">
         </div>
+
+        <h1>{{ usuario.nombre }}</h1>
+        <p class="text-pink">{{  usuario.celular }}</p>
+
       </ion-col>
     </ion-row>
 
     <ion-card>
       <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-text>Ranking:</ion-text><br>
+          <ion-chip color="success" *ngIf="usuario.ranking"> {{ usuario.ranking }} </ion-chip>
+          <ion-chip color="success" *ngIf="!usuario.ranking"> - </ion-chip>
+        </ion-col>
         <ion-col class="ion-text-center">
           <ion-text>Today</ion-text><br>
           <ion-chip size="small" color="primary">
@@ -58,17 +67,56 @@
           </ion-chip>
         </ion-col>
         <ion-col class="ion-text-center">
-          <ion-text>Ranking:</ion-text><br>
-          <ion-chip color="success" *ngIf="usuario.ranking"> {{ usuario.ranking }}  </ion-chip>
-          <ion-chip color="success" *ngIf="!usuario.ranking"> -</ion-chip>
-        </ion-col>
-        <ion-col class="ion-text-center">
           <ion-text>All</ion-text><br>
           <ion-chip size="small" color="secondary">
             {{ usuario.todas }}
           </ion-chip>
         </ion-col>
+        <ion-col class="ion-text-center">
+          <ion-text>Canceled</ion-text><br>
+          <ion-chip size="small" color="danger" *ngIf="usuario.canceladas"> {{ usuario.canceladas }}  </ion-chip>
+          <ion-chip size="small" color="danger" *ngIf="!usuario.canceladas"> 0 </ion-chip>
+        </ion-col>
       </ion-row>
+    </ion-card>
+
+    <ion-card *ngIf="usuario.vehicles && !vehicle">
+      <ion-card-header color="danger">
+        <ion-card-subtitle> Choose a vehicle </ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-item *ngFor="let vehiculo of usuario.vehicles">
+        <ion-avatar  slot="start">
+          <img *ngIf="vehiculo.vehicle_id == 1" src="../../../assets/vehicles/auto.jpg" >
+          <img *ngIf="vehiculo.vehicle_id == 2" src="../../../assets/vehicles/moto.jpg" >
+          <img *ngIf="vehiculo.vehicle_id == 3" src="../../../assets/vehicles/scooter.png">
+          <img *ngIf="vehiculo.vehicle_id == 4" src="../../../assets/vehicles/bici.jpg">
+        </ion-avatar>
+        <ion-label class="ion-text-wrap">
+            <ion-text color="pink"> {{ vehiculo.placa }} </ion-text>
+            <p> {{ vehiculo.marca }} {{ vehiculo.modelo }} {{ vehiculo.color }} {{ vehiculo.year }}</p>
+        </ion-label>
+        <ion-button (click)="chooseVehicle(vehiculo)" slot="end" size="small" color="primary"> Choose</ion-button>
+      </ion-item>
+    </ion-card>
+
+    <ion-card *ngIf="vehicle">
+      <ion-card-header color="success">
+        <ion-card-subtitle > Your Vehicle</ion-card-subtitle>
+      </ion-card-header>
+      <ion-item >
+        <ion-avatar slot="start">
+          <img *ngIf="vehicle.vehicle_id == 1" src="../../../assets/vehicles/auto.jpg">
+          <img *ngIf="vehicle.vehicle_id == 2" src="../../../assets/vehicles/moto.jpg">
+          <img *ngIf="vehicle.vehicle_id == 3" src="../../../assets/vehicles/scooter.png">
+          <img *ngIf="vehicle.vehicle_id == 4" src="../../../assets/vehicles/bici.jpg">
+        </ion-avatar>
+        <ion-label class="ion-text-wrap">
+          <ion-text color="pink"> {{ vehicle.placa }} </ion-text>
+          <p> {{ vehicle.marca }} {{ vehicle.modelo }} {{ vehicle.color }} {{ vehicle.year }}</p>
+        </ion-label>
+        <ion-icon name="checkmark-outline" slot="end" color="success"></ion-icon>
+      </ion-item>
     </ion-card>
 
     <ion-row *ngIf="usuario.status == 0">
@@ -129,6 +177,11 @@
         <ion-item href="http://www.goppai.com" class="ion_item" lines="full">
           <ion-icon name="help-buoy-outline" slot="start" color="warning"></ion-icon>
           <ion-label>Help & support</ion-label>
+        </ion-item>
+
+        <ion-item href="http://www.goppai.com/privacy" class="ion_item" lines="full">
+          <ion-icon name="help-buoy-outline" slot="start" color="warning"></ion-icon>
+          <ion-label>Terms & Conditions</ion-label>
         </ion-item>
 
         <ion-item class="ion_item" lines="full">
