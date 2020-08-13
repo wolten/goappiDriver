@@ -72,7 +72,7 @@ export class DeliveriesService {
     if (!this.token) {
       this.navCtrl.navigateRoot('/login');
     }
-    const headers = new HttpHeaders({ 'Authorization': 'Bearer ' + this.token });
+    const headers = new HttpHeaders({ Authorization: 'Bearer ' + this.token });
     return await this.http.get<any>(`${URL}/api/orders/history`, { headers }).toPromise();
 
   }
@@ -85,7 +85,7 @@ export class DeliveriesService {
     if (!this.token) {
       this.navCtrl.navigateRoot('/login');
     }
-    const headers = new HttpHeaders({'Authorization': 'Bearer ' + this.token });
+    const headers = new HttpHeaders({Authorization: 'Bearer ' + this.token });
     return await this.http.get<any>(`${URL}/api/orders/pendientes`, { headers }).toPromise();
 
   }
@@ -98,7 +98,7 @@ export class DeliveriesService {
     if (!this.token) {
       this.navCtrl.navigateRoot('/login');
     }
-    const headers = new HttpHeaders({ 'Authorization': 'Bearer ' + this.token });
+    const headers = new HttpHeaders({ Authorization: 'Bearer ' + this.token });
     return await this.http.get<Delivery>(`${URL}/api/orders/activa`, { headers }).toPromise();
   }
 
@@ -151,7 +151,8 @@ export class DeliveriesService {
   }
 
   // ACTUALIZAR EL ESTADO DE LA ENTREGA
-  async updateDelivery(tokenx: string, statusDelivery:number): Promise<any> {
+  // tslint:disable-next-line:variable-name
+  async updateDelivery(tokenx: string, status_delivery:number): Promise<any> {
 
     await this.cargarToken();
     await this.getVehicle();
@@ -164,12 +165,9 @@ export class DeliveriesService {
       this.navCtrl.navigateRoot('/main/tabs/tab3');
     }
 
-    const params = {
-      'tokenx': tokenx,
-      'status_delivery': statusDelivery,
-      'vehicle_id': this.vehicle.vehicle_id
-    }
-    const headers = new HttpHeaders({ 'Authorization': 'Bearer ' + this.token });
+    const vehicle_id = this.vehicle.vehicle_id;
+    const params = {tokenx, status_delivery, vehicle_id  }
+    const headers = new HttpHeaders({ Authorization: 'Bearer ' + this.token });
     return await this.http.post(`${URL}/api/orders/update/delivery`, params, { headers }).toPromise();
 
   }
@@ -183,7 +181,7 @@ export class DeliveriesService {
     }
 
     const params = {tokenx}
-    const headers = new HttpHeaders({ 'Authorization': 'Bearer ' + this.token });
+    const headers = new HttpHeaders({ Authorization: 'Bearer ' + this.token });
     return await this.http.post(`${URL}/api/orders/cancel`, params, { headers }).toPromise();
 
   }
@@ -197,7 +195,7 @@ export class DeliveriesService {
     }
 
     const params = { tokenx, ranking, actor, evalua }
-    const headers = new HttpHeaders({ 'Authorization': 'Bearer ' + this.token });
+    const headers = new HttpHeaders({ Authorization: 'Bearer ' + this.token });
     return await this.http.post(`${URL}/api/orders/ranking`, params, { headers }).toPromise();
 
   }
