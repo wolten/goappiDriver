@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UsuarioService } from '../../services/usuario.service';
-import { Delivery } from '../../interfaces/interfaces';
+import { Delivery, Usuario } from '../../interfaces/interfaces';
 import { ActionSheetController, NavController, IonList } from '@ionic/angular';
 import { DeliveriesService } from '../../services/deliveries.service';
 import { UiServiceService } from '../../services/ui-service.service';
 import { AlertController } from '@ionic/angular';
 import { NavigationExtras } from '@angular/router';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-tab1',
@@ -18,11 +19,15 @@ export class Tab1Page implements OnInit {
   deliverys = [];
   loading   = false;
   deliveryActiva: Delivery; 
+  balance  = 0;
+  services = 0;
+  usuario: Usuario;
 
   constructor(private deliveryService: DeliveriesService, 
               private uiService: UiServiceService,
               public actionSheetController: ActionSheetController,
               private navCtrl: NavController,
+              private storage: Storage,
               public alertCtrl: AlertController ) {}
 
   ngOnInit(){  
@@ -33,16 +38,35 @@ export class Tab1Page implements OnInit {
       this.deliveryActiva = resp.deliverie; 
       console.log('Activa', this.deliveryActiva);
     });
-    this.loadEntregasPendientes();      
+
+    this.loadEntregasPendientes();  
+
+    // GET USUARIO ALMACENADO this.usuario = this.usuarioService.getUsuario();
+    this.loading = false;
+    this.storage.get('usuario').then(resp => {
+      this.loading = true;
+      console.log('Usuario[storage]', resp);
+      this.usuario = resp;
+      console.log('repartidor OK. Sin delivery activa');
+      
+    });     
   }
 
   // VER ENTREGA
   verDelivery(delivery: Delivery) {
-    console.log('Ver detalle de pedido');
-    const params: NavigationExtras = {
-      queryParams: { delivery: delivery.tokenx }
-    };
-    this.navCtrl.navigateRoot('/delivery', params);
+
+    let params: NavigationExtras;
+
+    if (delivery.order.type === 1) {
+      params = { queryParams: { delivery: delivery.order.tokenx } };
+      this.navCtrl.navigateRoot('/ondemand', params);
+
+    } else {
+
+      params = { queryParams: { delivery: delivery.tokenx } };
+      this.navCtrl.navigateRoot('/delivery', params);
+    }
+
   }
 
   // CARGAR PEDIDOS PENDIENTES
@@ -50,9 +74,19 @@ export class Tab1Page implements OnInit {
 
     this.loading = false;
     this.deliveryService.getHistory().then( resp => {
-      this.deliverys = resp.deliverys;
-      console.log('History', this.deliverys);
-      this.loading = true;
+
+      if(resp['status'] === 'success' ){
+        this.deliverys = resp.deliverys;
+        console.log('History', this.deliverys);
+        this.balance  = resp['balance'];
+        this.services = resp['services'];
+        this.loading  = true;
+
+      }else{
+        this.uiService.presentToast('Ooops try later, please.')
+      }
+
+
     });
 
     if (event)

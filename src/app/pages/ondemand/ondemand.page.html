@@ -28,37 +28,92 @@
     <!-- SEGUIMIENTO DE LA ORDEN -->
     <ion-row *ngIf="order">
      <ion-col>
-       <ion-item lines="full">
-        <ion-icon name="document-text-outline" slot="start"></ion-icon>
-         <ion-label class="ion-text-wrap">
-           <ion-text color="pink">Description</ion-text>
-            <h1>{{ order.descripcion }}</h1>
-         </ion-label>
-       </ion-item>
 
-       <ion-item lines="full">
-        <ion-icon slot="start" name="calendar-outline"></ion-icon>
-         <ion-label class="ion-text-wrap">
-           <ion-text>Date of service: </ion-text>
-           <ion-text color="pink">{{ order.programated_at | date:'MMM d' }} {{ order.programated_at | date:'shortTime' }}</ion-text>
-         </ion-label>
-       </ion-item>
-
-       <ion-item lines="full" *ngFor="let destinox of order.destinations">
-        <ion-icon slot="start" name="golf-outline" *ngIf="destinox.status === 0"></ion-icon>
-        <ion-icon slot="start" name="checkmark-circle" *ngIf="destinox.status === 1" color="success"></ion-icon>
+      <ion-item lines="full">
         <ion-label class="ion-text-wrap">
-          <ion-text> {{ destinox.origen }}</ion-text><br>
-          <p>  <ion-text color="pink"> {{ destinox.destino }} </ion-text>  </p>
-          <p> Distance: {{ (destinox.distance/1000) | number:'1.1-2' }}km, Duration: {{ (destinox.duration/60) | number:'1.1-2' }} mins aprox.</p>
+            <ion-text color="goblue">Order: </ion-text>
+            <ion-text color="pink">#{{ order.tokenx }} </ion-text>
         </ion-label>
-       </ion-item>
+      </ion-item>
+
+      <!-- Descripcion de la entrega -->
+      <ion-item lines="full">
+        <ion-icon name="document-text-outline" slot="start"></ion-icon>
+        <ion-label class="ion-text-wrap">
+          <ion-text color="pink">Description</ion-text>
+          <h1>{{ order.descripcion }}</h1>
+        </ion-label>
+      </ion-item>
+
+      <!-- DATOS DEL NEGOCIO -->
+      <ion-item lines="full" *ngIf="order.comercio">
+        <ion-icon name="fast-food-outline" slot="start"></ion-icon>
+        <ion-label class="ion-text-wrap">
+          <ion-text color="pink">{{ order.comercio.nombre }}</ion-text>
+          <p> 
+            <b>Tel.</b> <a href="tel:{{ order.comercio.telefono }}"> {{ order.comercio.telefono }}</a> &nbsp;
+            <b>Cel.</b> <a href="tel:{{ order.comercio.movil }} "> {{ order.comercio.movil }}</a>
+          </p>
+        </ion-label>
+      </ion-item>
+ 
+      <!-- Fecha y hora de servicio -->
+      <ion-item lines="full">
+      <ion-icon slot="start" name="calendar-outline"></ion-icon>
+        <ion-label class="ion-text-wrap">
+          <ion-text>Date of service: </ion-text>
+          <ion-text color="pink">{{ order.programated_at | date:'MMM d' }} {{ order.programated_at | date:'shortTime' }}</ion-text>
+        </ion-label>
+      </ion-item>
+      
+      <!-- Destinations -->
+      <ion-item lines="full" *ngFor="let destinox of order.destinations">
+      <ion-icon slot="start" name="golf-outline" *ngIf="destinox.status === 0"></ion-icon>
+      <ion-icon slot="start" name="checkmark-circle" *ngIf="destinox.status === 1" color="success"></ion-icon>
+      <ion-label class="ion-text-wrap">
+        <ion-text> {{ destinox.origen }}</ion-text><br>
+        <p>  <ion-text color="pink"> {{ destinox.destino }} </ion-text>  </p>
+        <p> Distance: {{ (destinox.distance/1000) | number:'1.1-2' }}km, Duration: {{ (destinox.duration/60) | number:'1.1-2' }} mins aprox.</p>
+      </ion-label>
+      </ion-item>
+      
+      <!-- ENTREGA SIN TOMAR -->
+      <ion-button expand='block' color="success" *ngIf="order.delivery.status === 0" (click)="aceptarEntrega(order.delivery)"> 
+        <ion-icon slot="start" name="checkmark"></ion-icon>
+        Accept delivery 
+      </ion-button>
+
+      <!-- ORDEN TOMADA -->
+      <ion-item *ngIf="order.delivery.date_aceptado" lines="full">
+      <ion-icon name="hand-right" slot="start" color="primary"></ion-icon>
+      <ion-label class="ion-text-wrap">
+          <p> 
+            <ion-text color="goblue">Order taken</ion-text>
+          </p>
+          <ion-text> {{ order.delivery.date_aceptado | date }} {{ order.delivery.date_aceptado | date:'shortTime' }} </ion-text>
+      </ion-label>
+      </ion-item>
+      
+      <!-- DATE ENTREGADA -->
+      <ion-item *ngIf="order.delivery.date_entregado" lines="full">
+        <ion-icon slot="start" name="checkmark-circle"  color="success"></ion-icon>
+        <ion-label class="ion-text-wrap">
+          <p>
+            <ion-text color="success">Delivered</ion-text>
+          </p>
+          <ion-text> {{ order.delivery.date_entregado | date }} {{ order.delivery.date_entregado | date:'shortTime' }}
+          </ion-text>
+        </ion-label>
+      </ion-item>
+
+
      </ion-col>
     </ion-row>
 
-    <!-- DESTINOS POR ENTREGAR EN CURSO -->
+    <!-- CARDS ------ DESTINOS POR ENTREGAR EN CURSO -->
     <ion-row *ngIf="!finalizar && order" class="fixed-bottom">
       <ion-col>
+
        <!-- RECIEN TOMADO:   -->
        <ion-card *ngIf="order.delivery.status === 1 && destino && destino.status_delivery === 0">
          <ion-card-header>

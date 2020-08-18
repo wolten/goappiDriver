@@ -21,7 +21,8 @@ export class Tab3Page implements OnInit {
   documento  = [];
   loading    = false;
   vehicle: Vehicle;
-  
+
+
   constructor(private usuarioService: UsuarioService, 
               public actionSheetController: ActionSheetController,
               private camera: Camera,

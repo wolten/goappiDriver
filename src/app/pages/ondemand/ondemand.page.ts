@@ -42,6 +42,7 @@ export class OndemandPage implements OnInit {
     this.usuario = this.usuarioService.getUsuario();
   }
 
+  // OBTENEMOS LA ORDEN ACTIVA
   async getOrder(){
     
     await this.deliveryService.getOrder(this.tokenx).then(resp => {
@@ -59,10 +60,12 @@ export class OndemandPage implements OnInit {
     });     
   }
 
+  // LANZA EL SERVICIO DE NAVIGATION GPS
   async driveService(origen: string, destino: string) {
 
     if(this.destino.status_delivery === 0){
-      origen = this.usuario.lat + ',' + this.usuario.lng;
+      origen  = this.usuario.lat + ',' + this.usuario.lng;
+      destino = this.destino.origen; 
     }
 
     console.log('Desde: ', origen, 'Hacia: ', destino);
@@ -74,6 +77,7 @@ export class OndemandPage implements OnInit {
       );
   }
 
+  // ACTUALIZAMOS EL DESTINO
   async updateStatusDestination(){
     // STATUS DELIVERY DEL DESTINO
     // 0, CONSULTA DE PEDIDO
@@ -142,7 +146,7 @@ export class OndemandPage implements OnInit {
     await alert.present(); // PRESENTA EL ALERT            
   }
 
-
+  // DRIVER CALIFICA AL NEGOCIO
   async calificaNegocio(tokenx, ranking) {
 
     this.calificando = true;
@@ -155,9 +159,7 @@ export class OndemandPage implements OnInit {
     });
   }
 
-
-
-
+  // FINALIZAMOS LA ORDEN
   async finishOrder(tokenx: string) {
 
     /* 
@@ -191,9 +193,10 @@ export class OndemandPage implements OnInit {
 
               console.log('SERVICE RESPONSE: ', resp);
               if (resp['status'] === 'success') {
-
-                  this.ui.presentToast('Gracias por tus servicios.');
-                  this.navCtrl.navigateRoot('/main/tabs/tab2');
+                
+                this.deliveryService.disableLocalizacionBackGround();
+                this.ui.presentToast('Gracias por tus servicios.');
+                this.navCtrl.navigateRoot('/main/tabs/tab2');
 
               } else {
                 this.ui.presentToast('Oops try later!!');
@@ -210,5 +213,53 @@ export class OndemandPage implements OnInit {
 
     await alert.present(); // PRESENTA EL ALERT
   }
+  // FUNCTION PARA ACEPTAR UN PEDIDO
+  async aceptarEntrega(thisDelivery: Delivery) {
+
+
+    const alert = await this.alertCtrl.create({
+      header: 'Pending order',
+      subHeader: 'Do you want to start this order?',
+      message: 'We will take you step by step. ;)',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => { console.log('Cancelar'); }
+        },
+        {
+          text: 'Ok',
+          handler: (blah) => { 
+
+            this.deliveryService.updateDelivery(thisDelivery.tokenx, 1)
+              .then(resp => {
+
+                if (resp['status'] === 'success') {
+
+                  this.deliveryService.enableLocalizacionBackGround();
+                  this.navCtrl.navigateRoot('/main/tabs/tab2');    
+
+                } else {
+
+                  if (resp['status_code'] === 'DRIVER-INACTIVE')
+                    this.ui.presentToast('Change your status to available.');
+                  else
+                    this.ui.presentToast('You have a delivery in progress.');
+                }
+
+
+
+              }).catch(resp => { this.ui.presentToast('Sorry, we are undergoing maintenance.'); });
+
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
 
 } // END OF CLASS

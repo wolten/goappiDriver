@@ -7,6 +7,8 @@ import { NavController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 
 const URL = environment.url;
+declare var window; // BACKGROUND GEOPOSITION
+
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +22,30 @@ export class DeliveriesService {
   constructor(private http: HttpClient,
     private storage: Storage,
     private navCtrl: NavController) { }
+
+  // ACTIVAR  BACKGROUND-GEOPOSITION
+  async enableLocalizacionBackGround(){
+    window.app.backgroundGeolocation.checkStatus(status => {
+      console.log('[INFO] BackgroundGeolocation service is running', status.isRunning);
+      console.log('[INFO] BackgroundGeolocation services enabled', status.locationServicesEnabled);
+      console.log('[INFO] BackgroundGeolocation auth status: ' + status.authorization);
+
+      // you don't need to check status before start (this is just the example)
+      if (!status.isRunning) {
+        console.log('Si la disponibilidad esta encendida, y no esta corriendo el servicio, lo activamos');
+        window.app.backgroundGeolocation.start(); // triggers start on start event
+      }
+    });  
+  }
+
+  async disableLocalizacionBackGround() {
+    window.app.backgroundGeolocation.checkStatus( status => {
+      if (status.isRunning) {
+        window.app.backgroundGeolocation.stop();
+      }
+    }); 
+  }
+
 
   // UPDATE STATUS DEL DESTINO - ON DEMAND
   async updateStatusDeliveryDestino(token: string, status: number): Promise<any> {
@@ -151,8 +177,7 @@ export class DeliveriesService {
   }
 
   // ACTUALIZAR EL ESTADO DE LA ENTREGA
-  // tslint:disable-next-line:variable-name
-  async updateDelivery(tokenx: string, status_delivery:number): Promise<any> {
+    async updateDelivery(tokenx: string, status_delivery:number): Promise<any> {
 
     await this.cargarToken();
     await this.getVehicle();
@@ -199,9 +224,6 @@ export class DeliveriesService {
     return await this.http.post(`${URL}/api/orders/ranking`, params, { headers }).toPromise();
 
   }
-
-
-
 
   // FUNCION PARA CARGAR Y VALIDAR TOKEN
   async cargarToken() {

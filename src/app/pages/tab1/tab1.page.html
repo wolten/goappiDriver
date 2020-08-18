@@ -29,32 +29,67 @@
   </ion-grid>
 
   <ion-grid class="ion-no-margin ion-no-padding">
-    <ion-row *ngIf="deliverys">
-      <ion-col *ngIf="loading">
-        <ion-list>
-          <ion-item lines="full" *ngFor="let pedido of deliverys">
-            <ion-label class="ion-text-wrap">
-              <ion-text class="text-big"> {{ pedido.comercio.nombre }} </ion-text>
-              <p class="text-pink">{{ pedido.created_at | date }}</p>
-            </ion-label>
-            
-            <ion-button (click)="verDelivery(pedido)" slot="end" size="small" color="goblue">
-              <ion-icon name="information-circle-outline"></ion-icon>
-              Detail
-            </ion-button>
-          </ion-item>
-        </ion-list>
+
+    <ion-row *ngIf="usuario && loading">
+      <ion-col style="margin-left:10px;">
+        <h1>Hi {{ usuario.nombre }}</h1>
       </ion-col>
     </ion-row>
 
+    <ion-row *ngIf="loading">
+      <ion-col>
+        <ion-card *ngIf="loading">
+          <ion-card-header color="primary">
+            <ion-card-subtitle> This month </ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content> <br>
+            <h1 class="text-pink">Balance</h1>
+            <ion-row>
+              <ion-col class="ion-text-center">
+                <ion-text>Services:</ion-text><br>
+                <ion-chip color="success" > {{ services }} </ion-chip>
+              </ion-col>
+              <ion-col class="ion-text-center">
+                <ion-text>Balance:</ion-text><br>
+                <ion-chip color="primary"> {{ balance | currency }} </ion-chip>
+              </ion-col>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
 
-    <ion-row *ngIf="deliverys.length == 0">
+    
+    <ion-row *ngIf="loading">
+      <ion-col>
+        <h1 style="margin-left:10px;">History</h1>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="deliverys">
+      <ion-col *ngIf="loading">
+        <ion-list>
+          <ion-item-sliding *ngFor="let pedido of deliverys">
+            <ion-item lines="full">
+              <ion-label class="ion-text-wrap">
+                <ion-text class="text-big"> {{ pedido.comercio.nombre }} </ion-text>
+                <p class="text-pink">{{ pedido.created_at | date }} {{ pedido.created_at | date:'shortTime' }}</p>
+              </ion-label>
+            </ion-item>
+            <!-- BOTON DERECHO -->
+            <ion-item-options side="end">
+              <ion-item-option (click)="verDelivery(pedido)">View</ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="loading && deliverys && deliverys.length == 0">
       <ion-col class="ion-text-center">
-        <img src="../../../assets/sad.png" width="50%" />
         <h1 class="text-pink">You don't have a history yet.</h1>
         <p></p>
       </ion-col>
     </ion-row>
+
   </ion-grid>
 
  

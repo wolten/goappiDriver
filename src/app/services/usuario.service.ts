@@ -25,131 +25,13 @@ export class UsuarioService {
     private uiService: UiServiceService,
     private fileTransfer: FileTransfer) { }
 
-  async getCatalogoDocumentos(): Promise<any> {
-
-    await this.cargarToken();
-
-    if (!this.token) {
-      this.navCtrl.navigateRoot('/login');
-    }
-    const headers = new HttpHeaders({ 'Authorization': 'Bearer ' + this.token });
-    return await this.http.get<any>(`${URL}/api/documentos/catalogo`, { headers }).toPromise();
-  }
-
-  // UPLOAD PHOTO
-  async uploadPhotoDocument(img: string, documentoId: any) {
-
-    const options: FileUploadOptions = {
-      fileKey: 'inpt-file-upload',
-      params:{
-        'documento_id': documentoId
-      },
-      headers: { 'Authorization': 'Bearer ' + this.token }
-    };
-    const fileTransfer: FileTransferObject = this.fileTransfer.create();
-
-    return new Promise(resolve => {
-      // Upload 
-      fileTransfer.upload(img, `${URL}/api/driver/upload/docto`, options)
-        .then(data => {
-
-          console.log('UPLOAD SERVER RESPONDIO: ', data);
-          if (data.responseCode === 200) {
-            const response = JSON.parse(data.response);
-            console.log('Response', response);
-
-            if (response.status === 'ok') {
-              this.uiService.presentToast('Updated document');
-              this.usuario = response.usuario;
-              return resolve(true);
-
-            } else {
-              this.uiService.presentToast('Try later!');
-              return resolve(false);
-            }
-
-
-          } else {
-            this.uiService.presentToast('We could not contact the cloud');
-            return resolve(false);
-          }
-
-
-
-
-        }).catch(err => { this.uiService.presentToast('Ooops, try again more later!.'); return resolve(false); });
-    });
-
-  }
-
-  async confirmPhotoDocumento(tokenx: string): Promise<any>{ 
-    await this.cargarToken();
-
-    if (!this.token) { this.navCtrl.navigateRoot('/login'); }
-
-    const params = { 'tokenx': tokenx }
-    const headers = new HttpHeaders({ 'Authorization': 'Bearer ' + this.token });
-    return await this.http.post<any>(`${URL}/api/documento/confirm`, params, { headers }).toPromise();
-
-  } 
-
-  // UPLOAD PHOTO PROFILE
-  async uploadPhoto(img: string){
-
-    const options: FileUploadOptions = {
-        fileKey:'pic_profile',
-        headers: {  'Authorization': 'Bearer ' + this.token      }
-    };
-    const fileTransfer: FileTransferObject = this.fileTransfer.create();
-
-    return new Promise(resolve => {
-          // Upload
-          fileTransfer.upload(img, `${URL}/api/driver/upload/photo`, options)
-          .then( data => {
-                
-            console.log('UPLOAD SERVER RESPONDIO: ', data);
-
-
-            if (data.responseCode === 200) {  
-              const response = JSON.parse(data.response);
-              console.log('Response', response); 
-
-              if( response.status === 'ok') {
-                this.uiService.presentToast('Updated profile photo');
-                this.usuario = response.usuario;
-                return resolve(true);
-              }else {
-                this.uiService.presentToast('Try later!');
-                return resolve(false);
-              }
-              
-
-            } else {
-              this.uiService.presentToast('We could not contact the cloud');
-              return resolve(false);
-            }
-
-          }).catch(err => { this.uiService.presentToast('Ooops, try again more later!.'); return resolve(false);  });
-        });
-
-  }     
-
-  getUsuario() {
-
-    if (!this.usuario.tokenx) {
-      this.validaToken();
-    }
-
-    return { ...this.usuario };
-
-  }
 
   async login(celular : string, pass: string) {
 
     await this.getPlayerID();
     const data = { celular , pass, playerID: this.playerID };
 
-    return new Promise(resolve => {
+    return await new Promise(resolve => {
 
       this.http.post(`${URL}/api/driver/signin`, data)
         .subscribe(async resp => {
@@ -159,7 +41,7 @@ export class UsuarioService {
           if (resp['status'] === 'ok') {
 
             await this.guardarToken(resp['token']);
-            resolve(true);
+            resolve(true); 
 
           } else {
             this.token = null;
@@ -167,7 +49,7 @@ export class UsuarioService {
             resolve(false);
           }
 
-        },err => {  resolve(false)  });
+        }, err => {  console.log('ERRRRORSOTE: ', err);  resolve(false)  });
     });
 
   }
@@ -231,7 +113,7 @@ export class UsuarioService {
         .subscribe(resp => {
           
           if (resp['status'] === 'ok') {
-            
+             
             this.usuario = resp['usuario'];
             this.setUsuario(this.usuario);
             resolve(true);
@@ -242,6 +124,9 @@ export class UsuarioService {
             resolve(false);
           }
 
+        }, error => { 
+          this.uiService.alertaInformativa('Necesitas una conexión a internet.');
+          console.log(error);
         });
 
 
@@ -266,7 +151,119 @@ export class UsuarioService {
   async setUsuario(usuario: Usuario){
     await this.storage.set('usuario', usuario);
   }
+  async getCatalogoDocumentos(): Promise<any> {
+
+    await this.cargarToken();
+
+    if (!this.token) {
+      this.navCtrl.navigateRoot('/login');
+    }
+    const headers = new HttpHeaders({ Authorization: 'Bearer ' + this.token });
+    return await this.http.get<any>(`${URL}/api/documentos/catalogo`, { headers }).toPromise();
+  }
+  async uploadPhotoDocument(img: string, documentoId: any) {
+
+    const options: FileUploadOptions = {
+      fileKey: 'inpt-file-upload',
+      params: {
+        'documento_id': documentoId
+      },
+      headers: { Authorization: 'Bearer ' + this.token }
+    };
+    const fileTransfer: FileTransferObject = this.fileTransfer.create();
+
+    return new Promise(resolve => {
+      // Upload 
+      fileTransfer.upload(img, `${URL}/api/driver/upload/docto`, options)
+        .then(data => {
+
+          console.log('UPLOAD SERVER RESPONDIO: ', data);
+          if (data.responseCode === 200) {
+            const response = JSON.parse(data.response);
+            console.log('Response', response);
+
+            if (response.status === 'ok') {
+              this.uiService.presentToast('Updated document');
+              this.usuario = response.usuario;
+              return resolve(true);
+
+            } else {
+              this.uiService.presentToast('Try later!');
+              return resolve(false);
+            }
+
+
+          } else {
+            this.uiService.presentToast('We could not contact the cloud');
+            return resolve(false);
+          }
 
 
 
-}
+
+        }).catch(err => { this.uiService.presentToast('Ooops, try again more later!.'); return resolve(false); });
+    });
+
+  }
+  async confirmPhotoDocumento(tokenx: string): Promise<any> {
+    await this.cargarToken();
+
+    if (!this.token) { this.navCtrl.navigateRoot('/login'); }
+
+    const params = { tokenx }
+    const headers = new HttpHeaders({ Authorization: 'Bearer ' + this.token });
+    return await this.http.post<any>(`${URL}/api/documento/confirm`, params, { headers }).toPromise();
+
+  }
+  async uploadPhoto(img: string) {
+
+    const options: FileUploadOptions = {
+      fileKey: 'pic_profile',
+      headers: { Authorization: 'Bearer ' + this.token }
+    };
+    const fileTransfer: FileTransferObject = this.fileTransfer.create();
+
+    return new Promise(resolve => {
+      // Upload
+      fileTransfer.upload(img, `${URL}/api/driver/upload/photo`, options)
+        .then(data => {
+
+          console.log('UPLOAD SERVER RESPONDIO: ', data);
+
+
+          if (data.responseCode === 200) {
+            const response = JSON.parse(data.response);
+            console.log('Response', response);
+
+            if (response.status === 'ok') {
+              this.uiService.presentToast('Updated profile photo');
+              this.usuario = response.usuario;
+              return resolve(true);
+            } else {
+              this.uiService.presentToast('Try later!');
+              return resolve(false);
+            }
+
+
+          } else {
+            this.uiService.presentToast('We could not contact the cloud');
+            return resolve(false);
+          }
+
+        }).catch(err => { this.uiService.presentToast('Ooops, try again more later!.'); return resolve(false); });
+    });
+
+  }
+  getUsuario() {
+
+    if (!this.usuario.tokenx) {
+      this.validaToken();
+    }
+
+    return { ...this.usuario };
+
+  }
+
+
+
+} // END OF CLASS

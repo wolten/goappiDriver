@@ -11,7 +11,7 @@ import { DeliveriesService } from '../../services/deliveries.service';
 import { NavigationExtras } from '@angular/router';
 
 
-declare var window;
+// declare var window;
 
 @Component({
   selector: 'app-tab2',
@@ -48,12 +48,6 @@ export class Tab2Page implements OnInit {
       this.vehicle = response;
     });
 
-    // CARGANDO ENTREGA ACTIVA
-    this.deliveryService.getEntregaActiva().then(resp => {
-      this.deliveryActiva = resp.deliverie;
-      console.log('Activa', this.deliveryActiva);
-    });
-
     // ENTREGAS PENDIENTES
     this.loadEntregasPendientes();    
 
@@ -65,18 +59,12 @@ export class Tab2Page implements OnInit {
       this.loadingUsuario = true;
 
       // NOS ASEGURAMOS DE QUE SIGA LOCALIZANDO AL REPARTIDOR
-      if(this.usuario.status_drive === 1){
-        window.app.backgroundGeolocation.checkStatus((status) => {
-          console.log('[INFO] BackgroundGeolocation service is running', status.isRunning);
-          console.log('[INFO] BackgroundGeolocation services enabled', status.locationServicesEnabled);
-          console.log('[INFO] BackgroundGeolocation auth status: ' + status.authorization);
+      if(this.usuario.status_drive === 1 && this.deliveryActiva){
 
-          // you don't need to check status before start (this is just the example)
-          if (!status.isRunning){
-            console.log('Si la disponibilidad esta encendida, y no esta corriendo el servicio, lo activamos');
-            window.app.backgroundGeolocation.start(); // triggers start on start event
-          }
-        });   
+        this.deliveryService.enableLocalizacionBackGround();
+      }else{
+        if(!this.deliveryActiva)
+          console.log('repartidor OK. Sin delivery activa');
       }
     });
     
@@ -95,6 +83,8 @@ export class Tab2Page implements OnInit {
 
       this.deliverys = resp.deliverys;
       console.log('Entregas pendientes', this.deliverys);
+
+      this.getActiva();
       this.loading = true;
     });
 
@@ -153,6 +143,7 @@ export class Tab2Page implements OnInit {
                   const index = this.deliverys.indexOf(thisDelivery);
                   if (index > -1) { this.deliverys.splice(index, 1); }
 
+                  this.deliveryService.enableLocalizacionBackGround();
 
                 } else {
 
@@ -181,10 +172,12 @@ export class Tab2Page implements OnInit {
     // SI NO ESTA ACTIVO
     this.cargandoGeo = true;
     let estado;
-    if(this.usuario.status_drive === 0)
+
+    if(this.usuario.status_drive === 0){
       estado = 1;
-    else
+    }else{
       estado = 0;
+    }
     
     console.log('Disponibilidad: ', this.usuario.status_drive);
 
@@ -214,12 +207,14 @@ export class Tab2Page implements OnInit {
 
                 this.uiService.presentToast('To work!!');
                 this.usuario.status_drive = 1;
-                window.app.backgroundGeolocation.start();
+                // window.app.backgroundGeolocation.start();
+                // this.deliveryService.enableLocalizacionBackGround();
 
               } else {
 
                 this.usuario.status_drive = 0;
-                window.app.backgroundGeolocation.stop();
+                // window.app.backgroundGeolocation.stop();
+                this.deliveryService.disableLocalizacionBackGround();
                 this.uiService.presentToast('We wait for you soon.');
               }
 
@@ -227,14 +222,16 @@ export class Tab2Page implements OnInit {
               if (resp['status_code'] === 'STATUS-NO') {
 
                 this.uiService.presentToast('You are not authorized to start');
-                window.app.backgroundGeolocation.stop();
+                // window.app.backgroundGeolocation.stop();
+                this.deliveryService.disableLocalizacionBackGround();
                 this.usuario.status_drive = 0;
 
 
               } else {
                 this.uiService.presentToast('An error occurred, try later');
                 this.usuario.status_drive = 0;
-                window.app.backgroundGeolocation.stop();
+                // window.app.backgroundGeolocation.stop();
+                this.deliveryService.disableLocalizacionBackGround();
               }
             }
           });
@@ -262,12 +259,14 @@ export class Tab2Page implements OnInit {
 
               this.uiService.presentToast('To work!!');
               this.usuario.status_drive = 1;
-              window.app.backgroundGeolocation.start();
+              // window.app.backgroundGeolocation.start();
+              this.deliveryService.enableLocalizacionBackGround();
 
             } else {
 
               this.usuario.status_drive = 0;
-              window.app.backgroundGeolocation.stop();
+              // window.app.backgroundGeolocation.stop();
+              this.deliveryService.disableLocalizacionBackGround();
               this.uiService.presentToast('We wait for you soon.');
             }
 
@@ -275,14 +274,16 @@ export class Tab2Page implements OnInit {
             if (resp['status_code'] === 'STATUS-NO') {
 
               this.uiService.presentToast('You are not authorized to start');
-              window.app.backgroundGeolocation.stop();
+              // window.app.backgroundGeolocation.stop();
+              this.deliveryService.disableLocalizacionBackGround();
               this.usuario.status_drive = 0;
 
 
             } else {
               this.uiService.presentToast('An error occurred, try later');
               this.usuario.status_drive = 0;
-              window.app.backgroundGeolocation.stop();
+              // window.app.backgroundGeolocation.stop();
+              this.deliveryService.disableLocalizacionBackGround();
             }
           }
         });
@@ -302,6 +303,16 @@ export class Tab2Page implements OnInit {
   recargar(event) {
     this.deliverys = [];
     this.loadEntregasPendientes(event);
+  }
+
+  async getActiva(){
+
+    // CARGANDO ENTREGA ACTIVA
+    await this.deliveryService.getEntregaActiva().then(resp => {
+      this.deliveryActiva = resp.deliverie;
+      console.log('Activa', this.deliveryActiva);
+    });    
+
   }
 
 }

@@ -92,28 +92,28 @@
             <ion-item-option (click)="aceptarEntrega(pedido)" color="success">Start</ion-item-option>
           </ion-item-options>
 
-          <!-- EL ITEM -->
+          <!-- EL ITEM --> 
           <ion-item lines="full">
             <ion-label class="ion-text-wrap">
-              <h2 class="text-bold"> {{ pedido.comercio.nombre }} </h2>
+              <h2 class="text-bold"> <ion-text color="goblue"> {{ pedido.comercio.nombre }} </ion-text> </h2>
               <ion-text color="pink" *ngIf="pedido.order.type === 1">On demand</ion-text>
               <p *ngIf="pedido.order.type === 0">
                 {{ pedido.direccion.colonia | titlecase }}
                 {{ pedido.direccion.ciudad | titlecase }}
                 {{ pedido.direccion.estado | titlecase }}
               </p> 
-            </ion-label> 
+            </ion-label>  
             <!--FECHA DE PEDIDO -->
             <ion-note slot="end" mode="ios" *ngIf="pedido.order.type === 0" > 
-              <ion-text color="primary"> {{ pedido.created_at | date:'MMM d' }} </ion-text>
-              <ion-text color="secondary"> {{ pedido.created_at | date:'shortTime' }} </ion-text> <br>
+              <ion-text color="primary"> {{ pedido.created_at | date:'MMM d' }} </ion-text> <br>
+              <ion-text color="secondary"> {{ pedido.created_at | date:'shortTime' }} </ion-text>
             </ion-note>
             <!--FECHA PROGRAMADA PARA ENTREGAR ONDEMAND -->
             <ion-note slot="end" mode="ios" *ngIf="pedido.order.type === 1">
               <ion-text color="secondary"> {{ pedido.order.programated_at | date:'MMM d' }} </ion-text> <br>
               <ion-text color="secondary"> {{ pedido.order.programated_at | date:'shortTime' }} </ion-text> <br>
               
-            </ion-note>
+            </ion-note>  
           </ion-item>
 
           <!-- BOTON DERECHO -->
@@ -121,36 +121,6 @@
             <ion-item-option (click)="verDelivery(pedido)">View</ion-item-option>
           </ion-item-options>
         </ion-item-sliding>
-
-
-        <!-- <ion-card *ngFor="let pedido of deliverys" >
-          <ion-card-header>
-            <ion-card-subtitle class="text-big" color="primary"> {{ pedido.bussiness_name }} </ion-card-subtitle>
-          </ion-card-header>
-            <ion-item lines="none">
-              <img src="../../../assets/icon/bebidas.png" slot="start" width="60">
-              <ion-label class="ion-text-wrap">
-                <p> {{ pedido.entrega_short_direccion | titlecase }} </p>
-                <ion-button (click)="aceptarEntrega(pedido)" size="small" color="success">
-                  <ion-icon name="checkmark-outline"></ion-icon>
-                  Take
-                </ion-button>
-                <ion-button (click)="verDelivery(pedido)" size="small" color="goblue">
-                  <ion-icon name="information-circle-outline"></ion-icon>
-                  Detail
-                </ion-button>
-              </ion-label>
-            </ion-item>
-
-            <ion-row>
-              <ion-col class="ion-padding ion-text-right">
-                <ion-card-subtitle color="medium">{{ pedido.date_delivery | timeAgo }}</ion-card-subtitle>
-              </ion-col>
-            </ion-row>
-        </ion-card> -->
-
-
-
 
       </ion-col>
     </ion-row>
