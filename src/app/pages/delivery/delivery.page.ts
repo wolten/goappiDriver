@@ -3,7 +3,7 @@ import { DeliveriesService } from 'src/app/services/deliveries.service';
 import { UiServiceService } from 'src/app/services/ui-service.service';
 import { NavController, AlertController, IonSlides } from '@ionic/angular';
 import { Delivery } from 'src/app/interfaces/interfaces';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, NavigationExtras } from '@angular/router';
 import { LaunchNavigator, LaunchNavigatorOptions } from '@ionic-native/launch-navigator/ngx';
 import { HashLocationStrategy } from '@angular/common';
 
@@ -260,8 +260,8 @@ export class DeliveryPage implements OnInit {
   }
 
   async loadDataInicial(){
-    if (this.tokenx === null) {
 
+    if (this.tokenx === null) {
       this.deliveryService.getEntregaActiva().then(resp => {
         this.loading = false;
         if (resp['status'] === 'error') {
@@ -297,6 +297,13 @@ export class DeliveryPage implements OnInit {
         this.deliveryActiva = {};
       });
     }
+  }
+
+  async openChat(delivery: Delivery){
+    
+    let params: NavigationExtras;
+    params = { queryParams: { delivery: delivery.order.tokenx } };
+    this.navCtrl.navigateRoot('/chat', params);
   }
 
 } // END OF CLASS

@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-toolbar color="primary">
+        <ion-buttons slot="start">
+          <ion-back-button text="" defaultHref="/main/tabs/tab2"></ion-back-button>
+        </ion-buttons>
+    <ion-title>chat</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-grid>
+    <ion-row *ngFor="let mensaje of mensajes">
+
+      <ion-col size="9" *ngIf="currentUser !== mensaje.user" class="message other-message">
+        <b>{{ mensaje.user }}</b> <br>
+        <span>{{ mensaje.mensaje }}</span>
+        <div class="time" class="ion-text-right">
+          {{ mensaje.createdAt | date:'short' }}
+        </div>
+      </ion-col>
+
+      <ion-col size="9" offset="3" *ngIf="currentUser === mensaje.user" class="message my-message">
+        <b>{{ mensaje.user }}</b> <br>
+        <span>{{ mensaje.mensaje }}</span>
+        <div class="time" class="ion-text-right">
+          {{ mensaje.createdAt | date:'short' }}
+        </div>
+      </ion-col>
+
+    </ion-row>
+  </ion-grid>
+
+</ion-content>
+<ion-footer>
+  <ion-toolbar color="light">
+    <ion-row class="ion-align-items-center ion-no-padding">
+      <ion-col size="10">
+        <textarea autosize maxRows="4" [(ngModel)]="newMensaje" class="message-input"></textarea>
+      </ion-col>
+      <ion-col size="2">
+        <ion-button expand="block" fill="clear" color="primary" [disabled]="newMensaje === ''" class="message-btn" (click)="sendMenssage()">
+          <ion-icon name="chatbox-ellipses" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-toolbar>
+</ion-footer>

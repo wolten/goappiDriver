@@ -22,6 +22,11 @@ const routes: Routes = [
     path: 'ondemand',
     loadChildren: () => import('./pages/ondemand/ondemand.module').then( m => m.OndemandPageModule),
     canLoad: [UsuarioGuard]
+  },
+  {
+    path: 'chat',
+    loadChildren: () => import('./pages/chat/chat.module').then( m => m.ChatPageModule),
+    canLoad: [UsuarioGuard]
   }
 ];
 

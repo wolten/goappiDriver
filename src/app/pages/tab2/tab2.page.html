@@ -95,16 +95,19 @@
           <!-- EL ITEM --> 
           <ion-item lines="full">
             <ion-label class="ion-text-wrap">
-              <h2 class="text-bold"> <ion-text color="goblue"> {{ pedido.comercio.nombre }} </ion-text> </h2>
+              <h2 class="text-bold"> 
+                <ion-text color="goblue" size="large"> {{ pedido.comercio.nombre }} </ion-text> 
+              </h2>
               <ion-text color="pink" *ngIf="pedido.order.type === 1">On demand</ion-text>
+              <p> <ion-text color="medium" size="small">#{{ pedido.tokenx }}</ion-text> </p>
               <p *ngIf="pedido.order.type === 0">
-                {{ pedido.direccion.colonia | titlecase }}
-                {{ pedido.direccion.ciudad | titlecase }}
-                {{ pedido.direccion.estado | titlecase }}
+                {{ pedido.direccion?.colonia | titlecase }}
+                {{ pedido.direccion?.ciudad | titlecase }}
+                {{ pedido.direccion?.estado | titlecase }}
               </p> 
             </ion-label>  
             <!--FECHA DE PEDIDO -->
-            <ion-note slot="end" mode="ios" *ngIf="pedido.order.type === 0" > 
+            <ion-note slot="end" mode="ios" *ngIf="pedido.order.type === 0 || pedido.order.type === 2" > 
               <ion-text color="primary"> {{ pedido.created_at | date:'MMM d' }} </ion-text> <br>
               <ion-text color="secondary"> {{ pedido.created_at | date:'shortTime' }} </ion-text>
             </ion-note>

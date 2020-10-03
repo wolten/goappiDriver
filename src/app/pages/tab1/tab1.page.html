@@ -71,6 +71,7 @@
           <ion-item-sliding *ngFor="let pedido of deliverys">
             <ion-item lines="full">
               <ion-label class="ion-text-wrap">
+                <ion-text *ngIf="pedido.order.type === 1" color="success">On Demand</ion-text>
                 <ion-text class="text-big"> {{ pedido.comercio.nombre }} </ion-text>
                 <p class="text-pink">{{ pedido.created_at | date }} {{ pedido.created_at | date:'shortTime' }}</p>
               </ion-label>
