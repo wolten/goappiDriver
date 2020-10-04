@@ -10,8 +10,21 @@ import { environment } from 'src/environments/environment';
 import { UsuarioService } from './services/usuario.service';
 import { BackgroundGeolocationError } from '../../plugins/cordova-plugin-background-geolocation/www/BackgroundGeolocation';
 import { Mensaje } from './interfaces/interfaces';
+import * as firebase from 'firebase/app';
+import { NavigationExtras, Router } from '@angular/router';
 
 
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: 'AIzaSyAIbWHNt-biJm_Da2tfWjtfG25Il1RfDd0',
+  authDomain: 'goppaidriverspush.firebaseapp.com',
+  databaseURL: 'https://goppaidriverspush.firebaseio.com',
+  projectId: 'goppaidriverspush',
+  storageBucket: 'goppaidriverspush.appspot.com',
+  messagingSenderId: '291524709736',
+  appId: '1:291524709736:web:3161d805c437e5f8e19ad'
+};
 declare var window;
 
 @Component({
@@ -30,7 +43,8 @@ export class AppComponent {
     private storage: Storage,
     private alertCtrl: AlertController,
     private backgroundGeolocation: BackgroundGeolocation,
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    private route: Router
   ) {
     this.initializeApp();
     this.arr = [];
@@ -75,32 +89,29 @@ export class AppComponent {
 
       } // END OF VALIDACION DE PLATAFORMA CORRIENDO
       window.app = this;
-       
+      firebase.initializeApp(firebaseConfig); 
     });
   }
 
   setupPush(){
     this.oneSignal.startInit('30d5c362-2725-4a58-a737-b6d14af6a3af', '291524709736');
-
     this.oneSignal.inFocusDisplaying(this.oneSignal.OSInFocusDisplayOption.None);
-
     this.oneSignal.handleNotificationReceived().subscribe(data => {
       // do something when notification is received
       
       // CON LA APLICACION ABIERTA
-      const msg: string = data.payload.body;
+      const msg: string  = data.payload.body;
       const title:string = data.payload.title;
-      const additionalData: any = data.payload.additionalData;
-      this.showAlert(title, msg, additionalData.task);
-
+      const datax: any   = data.payload.additionalData;
       const mensaje: Mensaje = {
         mensaje : msg,
         titulo : title,
-        task : additionalData.task,
+        task : datax.task,
         fecha : new Date().toString()
       };
-
+      
       this.guardarMensaje(mensaje);
+      this.showAlert(title, msg, datax.task, datax.tokenx);
 
 
     }); 
@@ -119,8 +130,6 @@ export class AppComponent {
 
     // GET DE PUSHTOKEN, DEVICE_ID
     this.oneSignal.getIds().then(identity => {
-       // console.log('PushToken:',identity.pushToken);
-       console.log('PlayerID',identity.userId);
       this.storage.set('playerID', identity.userId);
      });    
   }
@@ -148,24 +157,35 @@ export class AppComponent {
 
   }
 
-
-
-  async showAlert(title, msg, task) {
+  async showAlert(title, msg, task, tokenx) {
     const alert = await this.alertCtrl.create({
       header: title,
       subHeader: msg,
       buttons: [
         {
-          text: `${task}`,
+          text: `OK`,
           handler: () => {
-            // E.g: Navigate to a specific screen
-            console.log('Action', task)
+            this.doAccion(task, tokenx);
           }
         }
       ]
     })
     alert.present();
   }
+
+  async doAccion(task, tokenx) {
+    console.log('PUSH: ', task, tokenx);
+    switch (task) {
+      case 'mensaje':
+        const params: NavigationExtras = { queryParams: { tokenx } };
+        this.route.navigate(['chat'], params);
+      break;
+
+      // Default
+      default: console.log('Accion Default: ', task);  break;
+    }
+  }
+
 
 
 

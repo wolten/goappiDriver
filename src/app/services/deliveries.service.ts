@@ -69,7 +69,6 @@ export class DeliveriesService {
 
   }
 
-
   // ACTUALIZAR EL ESTADO DE LA ENTREGA
   async finishOrder(token: string): Promise<any> {
 
@@ -230,5 +229,14 @@ export class DeliveriesService {
     this.token = await this.storage.get('token') || null;
   }
 
+  // SEND PUSH
+  async sendPush(tokenx: string): Promise<any> {
+
+    await this.cargarToken();
+    if (!this.token) { this.navCtrl.navigateRoot('/login'); }
+    const headers = new HttpHeaders({ Authorization: 'Bearer ' + this.token });
+    return await this.http.post(`${URL}/api/orders/push/` + tokenx, null, { headers }).toPromise();
+
+  }
 
 }

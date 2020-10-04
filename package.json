@@ -39,6 +39,7 @@
     "cordova-plugin-file-transfer": "^1.7.1",
     "cordova-plugin-geolocation": "^4.0.2",
     "cordova-sqlite-storage": "^5.0.0",
+    "firebase": "^7.22.0",
     "ngx-autosize": "^1.8.0",
     "onesignal-cordova-plugin": "^2.9.1",
     "rxjs": "~6.5.1",
