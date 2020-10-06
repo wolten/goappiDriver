@@ -1,13 +1,26 @@
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="goblue">
         <ion-buttons slot="start">
           <ion-back-button text="" defaultHref="/main/tabs/tab2"></ion-back-button>
         </ion-buttons>
-    <ion-title>chat</ion-title>
+    <ion-title>Goppai Chat - Deliveries</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+
+  <ion-grid class="ion-no-padding">
+    <ion-row *ngIf="entrega && entrega.delivery && cliente" style="position: relative;">
+      <ion-item class="chat-info">
+        <ion-label>
+          To client: <ion-text color="pink">{{ cliente.nombre }} {{ cliente.apellido }}</ion-text>
+          <p>
+            <ion-text color="goblue"> Order: #{{ entrega.tokenx }} </ion-text>
+          </p>
+        </ion-label>
+      </ion-item>
+    </ion-row>
+  </ion-grid>
 
   <ion-grid>
     <ion-row *ngFor="let mensaje of mensajes">

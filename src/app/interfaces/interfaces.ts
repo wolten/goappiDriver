@@ -155,5 +155,6 @@ export interface Order {
     descripcion ?: string;
     destinations ?: Destino[];
     comercio ?: Comercio;
+    cliente ?: Cliente;
     type ?: number;
 }

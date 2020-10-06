@@ -5,11 +5,11 @@
     white-space: pre-wrap;
 }
 .other-message{
-    background: var(--ion-color-tertiary);
+    background: var(--ion-color-primary);
     color:#FFF;
 }
 .my-message{
-    background: var(--ion-color-secondary);
+    background: var(--ion-color-goblue);
     color:#FFF;
 }
 .time {
@@ -30,3 +30,10 @@ padding-right: 10px;
  --padding-start: 0.5em;
  --padding-end: 1em;
 }
+.chat-info{
+    position:fixed;
+    top:50px;
+    left:0;
+    width: 100%;
+    z-index: 9999;
+} 

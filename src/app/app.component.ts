@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { Platform, AlertController } from '@ionic/angular';
+import { Platform, AlertController, NavController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { OneSignal } from '@ionic-native/onesignal/ngx';
@@ -44,7 +44,7 @@ export class AppComponent {
     private alertCtrl: AlertController,
     private backgroundGeolocation: BackgroundGeolocation,
     private usuarioService: UsuarioService,
-    private route: Router
+    private navCtrl: NavController
   ) {
     this.initializeApp();
     this.arr = [];
@@ -109,7 +109,7 @@ export class AppComponent {
         task : datax.task,
         fecha : new Date().toString()
       };
-      
+      console.log('Datax: ', datax);
       this.guardarMensaje(mensaje);
       this.showAlert(title, msg, datax.task, datax.tokenx);
 
@@ -135,10 +135,6 @@ export class AppComponent {
   }
 
   async guardarMensaje(mensaje: Mensaje) {
-
-    console.log('Mensaje: ', JSON.stringify(mensaje));
-
-
 
     // TRAEMOS TODOS LOS MENSAJES
     await this.storage.get('mensajes').then( resp => {
@@ -176,10 +172,12 @@ export class AppComponent {
   async doAccion(task, tokenx) {
     console.log('PUSH: ', task, tokenx);
     switch (task) {
+      // MENSAJE
       case 'mensaje':
-        const params: NavigationExtras = { queryParams: { tokenx } };
-        this.route.navigate(['chat'], params);
-      break;
+        let paramx: NavigationExtras;
+        paramx = { queryParams: { delivery: tokenx } };
+        this.navCtrl.navigateRoot('/chat', paramx);
+        break;
 
       // Default
       default: console.log('Accion Default: ', task);  break;

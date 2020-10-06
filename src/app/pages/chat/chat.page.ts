@@ -4,6 +4,8 @@ import { IonContent } from '@ionic/angular';
 import * as firebase from 'firebase';
 import { DeliveriesService } from 'src/app/services/deliveries.service';
 import { UiServiceService } from 'src/app/services/ui-service.service';
+import { UsuarioService } from 'src/app/services/usuario.service';
+import { Usuario, Delivery, Cliente, Order } from '../../interfaces/interfaces';
 
 @Component({
   selector: 'app-chat',
@@ -14,19 +16,16 @@ export class ChatPage implements OnInit {
 
   currentUser = 'Will';
   newMensaje = '';
-  mensajes =[
-    {
-      user: 'Will',
-      mensaje: 'Hola',
-      createdAt:1554090856000
-    }         
-  ];
+  mensajes =[ ];
+  usuario: Usuario;
   tokenx;
+  entrega: Order;
+  cliente: Cliente;
   @ViewChild(IonContent) content: IonContent;
   
   constructor(private route: ActivatedRoute, 
-              private deliveryService: DeliveriesService,
-              private uiService: UiServiceService) {
+              private usuarioService: UsuarioService,
+              private deliveryService: DeliveriesService) {
 
     this.route.queryParams.subscribe(params => {
       if (params && params.delivery) {
@@ -34,14 +33,23 @@ export class ChatPage implements OnInit {
         console.log('DATA:', this.tokenx);
       }
     });
-    
-    setTimeout(() => {
-      this.getMensajes();
-      
-    }, 500);
+    this.usuario = this.usuarioService.getUsuario();
+    console.log('Usuario', this.usuario);
+    this.currentUser = this.usuario.nombre ;
+
+    setTimeout(() => {    this.getMensajes();   }, 500);
    }
 
   ngOnInit() {
+    this.getOrder();
+  }
+  async getOrder() {
+    await this.deliveryService.getOrder(this.tokenx).then(response => {
+      this.entrega = response['order'];
+      console.log('entrega: ', this.entrega);
+      this.cliente = this.entrega.cliente;
+      // this.cliente = this.entrega.cliente;
+    });
   }
 
   getMensajes(){
@@ -55,7 +63,7 @@ export class ChatPage implements OnInit {
         this.mensajes.push(data[key]);
       }
 
-
+      setTimeout(() => { this.content.scrollToBottom(200); });
 
     });
   }
