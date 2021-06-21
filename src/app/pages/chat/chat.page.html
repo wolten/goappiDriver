@@ -3,7 +3,7 @@
         <ion-buttons slot="start">
           <ion-back-button text="" defaultHref="/main/tabs/tab2"></ion-back-button>
         </ion-buttons>
-    <ion-title>Goppai Chat - Deliveries</ion-title>
+    <ion-title>Goppai Repartos - Chat</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -13,9 +13,9 @@
     <ion-row *ngIf="entrega && entrega.delivery && cliente" style="position: relative;">
       <ion-item class="chat-info">
         <ion-label>
-          To client: <ion-text color="pink">{{ cliente.nombre }} {{ cliente.apellido }}</ion-text>
+          Cliente: <ion-text color="pink">{{ cliente.nombre }} {{ cliente.apellido }}</ion-text>
           <p>
-            <ion-text color="goblue"> Order: #{{ entrega.tokenx }} </ion-text>
+            <ion-text color="goblue"> Pedido: #{{ entrega.tokenx }} </ion-text>
           </p>
         </ion-label>
       </ion-item>

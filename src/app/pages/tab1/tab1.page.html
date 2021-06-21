@@ -1,6 +1,6 @@
 <ion-header translucent ="true" class="ion-no-border">
   <ion-toolbar>
-    <ion-title color="pink">History</ion-title>
+    <ion-title color="pink">Historial</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -32,7 +32,7 @@
 
     <ion-row *ngIf="usuario && loading">
       <ion-col style="margin-left:10px;">
-        <h1>Hi {{ usuario.nombre }}</h1>
+        <h1>{{ usuario.nombre }}</h1>
       </ion-col>
     </ion-row>
 
@@ -40,17 +40,17 @@
       <ion-col>
         <ion-card *ngIf="loading">
           <ion-card-header color="primary">
-            <ion-card-subtitle> This month </ion-card-subtitle>
+            <ion-card-subtitle> Este mes </ion-card-subtitle>
           </ion-card-header>
           <ion-card-content> <br>
-            <h1 class="text-pink">Balance</h1>
+            <h1 class="text-pink">Reporte</h1>
             <ion-row>
               <ion-col class="ion-text-center">
-                <ion-text>Services:</ion-text><br>
+                <ion-text>Servicios:</ion-text><br>
                 <ion-chip color="success" > {{ services }} </ion-chip>
               </ion-col>
               <ion-col class="ion-text-center">
-                <ion-text>Balance:</ion-text><br>
+                <ion-text>Ingresos:</ion-text><br>
                 <ion-chip color="primary"> {{ balance | currency }} </ion-chip>
               </ion-col>
             </ion-row>
@@ -62,7 +62,7 @@
     
     <ion-row *ngIf="loading">
       <ion-col>
-        <h1 style="margin-left:10px;">History</h1>
+        <h1 style="margin-left:10px;">Historial</h1>
       </ion-col>
     </ion-row>
     <ion-row *ngIf="deliverys">
@@ -86,7 +86,7 @@
     </ion-row>
     <ion-row *ngIf="loading && deliverys && deliverys.length == 0">
       <ion-col class="ion-text-center">
-        <h1 class="text-pink">You don't have a history yet.</h1>
+        <h1 class="text-pink"> Aún no tienes entregas</h1>
         <p></p>
       </ion-col>
     </ion-row>

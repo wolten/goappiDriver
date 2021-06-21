@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  url: 'http://www.goppai.com'
+  url: 'https://www.goppai.com'
   // url: 'http://localhost:8000'
 };
 

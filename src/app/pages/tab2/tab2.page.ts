@@ -119,18 +119,18 @@ export class Tab2Page implements OnInit {
 
 
     const alert = await this.alertCtrl.create({
-      header: 'Pending order',
-      subHeader: 'Do you want to start this order?',
-      message: 'We will take you step by step. ;)',
+      header: 'Pedido',
+      subHeader: '¿Quieres comenzar con esta orden?',
+      message: 'Te llevaremos paso a paso',
       buttons: [
         {
-          text: 'Cancel',
+          text: 'Cancelar',
           role: 'cancel',
           cssClass: 'secondary',
           handler: (blah) => { console.log('Cancelar'); }
         },
         {
-          text: 'Ok',
+          text: 'Comenzar',
           handler: (blah) => {
 
             this.deliveryService.updateDelivery(thisDelivery.tokenx, 1)
@@ -148,14 +148,13 @@ export class Tab2Page implements OnInit {
                 } else {
 
                   if (resp['status_code'] === 'DRIVER-INACTIVE')
-                    this.uiService.presentToast('Change your status to available.');
+                    this.uiService.presentToast('Cambia tu estado a disponible');
+                  else if (resp['status_code'] === 'VEHICLE-INACTIVE')
+                    this.uiService.presentToast('Ocurrio un problema al identificar tu vehiculo');
                   else
-                    this.uiService.presentToast('You have a delivery in progress.');
+                    this.uiService.presentToast('Tienes una entrega en proceso');
                 }
-
-
-
-              }).catch(resp => { this.uiService.presentToast('Sorry, we are undergoing maintenance.'); });
+              }).catch(resp => { this.uiService.presentToast('Lo sentimos, estamos en mantenimiento.'); });
 
 
           }
@@ -257,7 +256,7 @@ export class Tab2Page implements OnInit {
 
             if (resp['status_drive'] === 1) {
 
-              this.uiService.presentToast('To work!!');
+              this.uiService.presentToast('¡ A trabajar !');
               this.usuario.status_drive = 1;
               // window.app.backgroundGeolocation.start();
               this.deliveryService.enableLocalizacionBackGround();

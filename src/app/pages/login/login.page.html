@@ -21,7 +21,7 @@
               <ion-list>
 
                 <ion-item>
-                  <ion-label>Movil</ion-label>
+                  <ion-label>Teléfono</ion-label>
                   <ion-input name="celular" type="tel" [(ngModel)]="loginUser.celular" required></ion-input>
                 </ion-item>
 
@@ -38,7 +38,7 @@
           <ion-row>
             <ion-col>
               <ion-button type="submit" color="pink" shape="round">
-                Sign in
+                Entrar
               </ion-button>
             </ion-col>
           </ion-row>
@@ -68,12 +68,12 @@
               <ion-list>
 
                 <ion-item>
-                  <ion-label color="pink">Movil</ion-label>
+                  <ion-label color="pink">Teléfono</ion-label>
                   <ion-input name="celular" type="tel" [(ngModel)]="registerUser.celular" required></ion-input>
                 </ion-item>
 
                 <ion-item>
-                  <ion-label color="pink">Full Name</ion-label>
+                  <ion-label color="pink">Nombre completo</ion-label>
                   <ion-input name="nombre" type="text" [(ngModel)]="registerUser.nombre" required></ion-input>
                 </ion-item>
 
@@ -83,7 +83,7 @@
                 </ion-item>
 
                 <ion-item>
-                  <ion-label color="pink">Confirm Pass</ion-label>
+                  <ion-label color="pink">Confirma tu password</ion-label>
                   <ion-input name="confirm" type="password" [(ngModel)]="registerUser.confirm" required></ion-input>
                 </ion-item>
 
@@ -95,7 +95,7 @@
           <ion-row>
             <ion-col>
               <ion-button type="submit" color="goblue" shape="round">
-                Sign up
+                Registrar
               </ion-button>
             </ion-col>
           </ion-row>
@@ -122,13 +122,13 @@
 
       <ion-col>
         <ion-button shape="round" expand="full" color="pink" (click)="mostrarRegistro()">
-          Sign in
+          Entrar
         </ion-button>
       </ion-col>
 
       <ion-col>
         <ion-button shape="round" expand="full" color="goblue" (click)="mostrarLogin()">
-          Sign up
+          Registrar
         </ion-button>
       </ion-col>
 

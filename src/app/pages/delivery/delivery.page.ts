@@ -137,19 +137,19 @@ export class DeliveryPage implements OnInit {
     */
 
     const alert = await this.alertCtrl.create({
-      header: 'Delivery',
-      subHeader: 'Do you want to update the order?',
-      message: 'Changes cannot be undone',
+      header: 'Entrega',
+      subHeader: '¿Actualizar pedido?',
+      message: 'No se pueden deshacer los cambios',
       buttons: [
         {
-          text: 'Cancel',
+          text: 'Cancelar',
           role: 'cancel',
           cssClass: 'secondary',
           handler: (blah) => { console.log('Actualizacion cancelada');  }
         
         },  // END BUTTON 1
         {
-          text: 'Ok',
+          text: 'Continuar',
           handler: (blah) => {
 
             // this.uiService.presentToast('Tienes una entrega en curso...');
@@ -216,18 +216,18 @@ export class DeliveryPage implements OnInit {
 
 
     const alert = await this.alertCtrl.create({
-      header: 'Pending order',
-      subHeader: 'Do you want to start this order?',
-      message: 'We will take you step by step. ;)',
+      header: 'Pedido',
+      subHeader: '¿ Quieres comenzar?',
+      message: 'Te llevaremos paso a paso',
       buttons: [
         {
-          text: 'Cancel',
+          text: 'Cancelar',
           role: 'cancel',
           cssClass: 'secondary',
           handler: (blah) => { console.log('Cancelar'); }
         },
         {
-          text: 'Ok',
+          text: 'Tomar',
           handler: (blah) => {
 
             this.loading = true;
@@ -241,14 +241,14 @@ export class DeliveryPage implements OnInit {
                 } else {
 
                   if (resp['status_code'] === 'DRIVER-INACTIVE')
-                    this.uiService.presentToast('Change your status to available.');
+                    this.uiService.presentToast('Cambia tu estado a Disponibles');
                   else
-                    this.uiService.presentToast('You have a delivery in progress.');
+                    this.uiService.presentToast('Tienes entrega en proceso');
                 }
 
 
 
-              }).catch(resp => { this.uiService.presentToast('Sorry, we are undergoing maintenance.'); });
+              }).catch(resp => { this.uiService.presentToast('Lo sentimos estamos en mantenimiento'); });
 
 
           }

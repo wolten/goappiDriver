@@ -1,14 +1,14 @@
 <ion-header translucent="true" class="ion-no-border">
   <ion-toolbar class="ion-text-left">
-    <ion-title color="pink">Goppai Deliveries</ion-title>
+    <ion-title color="pink">Goppai Repartos</ion-title>
 
     <ion-buttons slot="end">
       <!-- <ion-label color="pink" *ngIf="!usuario.status_drive"> Offline</ion-label> -->
       <!-- <ion-label color="success" *ngIf="usuario.status_drive"> Online </ion-label> &nbsp; -->
       <!-- <ion-toggle color="success" [checked]="usuario.status_drive" (ionChange)="changeDisponibilidad($event.detail)" #toggleDisponibilidad></ion-toggle> -->
       <ion-spinner name="lines-small" *ngIf="cargandoGeo"></ion-spinner>
-      <ion-button (click)="changeDisponibilidad()" *ngIf="usuario.status_drive" slot="end" size="small" color="success" fill="solid"> Available</ion-button>
-      <ion-button (click)="changeDisponibilidad()" *ngIf="!usuario.status_drive" slot="end" size="small" color="danger" fill="solid"> Offline</ion-button>
+      <ion-button (click)="changeDisponibilidad()" *ngIf="usuario.status_drive" slot="end" size="small" color="success" fill="solid"> Disponible</ion-button>
+      <ion-button (click)="changeDisponibilidad()" *ngIf="!usuario.status_drive" slot="end" size="small" color="danger" fill="solid"> Inactivo</ion-button>
     </ion-buttons>
 
   </ion-toolbar> 
@@ -50,7 +50,7 @@
     
     <ion-row *ngIf="!usuario.status">
       <ion-col class="ion-text-center">
-        <ion-label color="danger" *ngIf="!usuario.status">We are reviewing your documentation</ion-label>
+        <ion-label color="danger" *ngIf="!usuario.status">Estamos revisando tus documentos</ion-label>
       </ion-col>
     </ion-row>
     
@@ -60,15 +60,15 @@
         <ion-card *ngIf="deliveryActiva">
           <img src="../../../assets/delivery_OK.png" />
           <ion-card-header>
-            <ion-card-subtitle color="pink" *ngIf="deliveryActiva.status_delivery == 1">Delivery In progress</ion-card-subtitle>
-            <ion-card-subtitle color="primary" *ngIf="deliveryActiva.status_delivery == 2">Collecting</ion-card-subtitle>
-            <ion-card-subtitle color="secondary" *ngIf="deliveryActiva.status_delivery == 3">Collected</ion-card-subtitle>
-            <ion-card-subtitle color="primary" *ngIf="deliveryActiva.status_delivery == 4">In transit</ion-card-subtitle>
-            <ion-card-subtitle color="success" *ngIf="deliveryActiva.status_delivery == 5">Delivered</ion-card-subtitle>
+            <ion-card-subtitle color="pink" *ngIf="deliveryActiva.status_delivery == 1">   Entrega en proceso</ion-card-subtitle>
+            <ion-card-subtitle color="primary" *ngIf="deliveryActiva.status_delivery == 2">Recolectando</ion-card-subtitle>
+            <ion-card-subtitle color="secondary" *ngIf="deliveryActiva.status_delivery == 3">Pedido recolectado</ion-card-subtitle>
+            <ion-card-subtitle color="primary" *ngIf="deliveryActiva.status_delivery == 4">En camino</ion-card-subtitle>
+            <ion-card-subtitle color="success" *ngIf="deliveryActiva.status_delivery == 5">Entregada</ion-card-subtitle>
           </ion-card-header>
 
           <ion-card-content>
-              <ion-button  (click)="verDelivery(deliveryActiva)" color="pink" expand='block'>Continue delivery.</ion-button>
+              <ion-button  (click)="verDelivery(deliveryActiva)" color="pink" expand='block'> Continuar con entrega.</ion-button>
           </ion-card-content>
 
         </ion-card>
@@ -76,7 +76,7 @@
         <div class="ion-text-center" *ngIf="!deliverys || deliverys.length <= 0">
           <br><br><br>
           <img src="../../../assets/deliveryman_pink.png" />
-          <h4 class="text-muted">You don't have any order pending!</h4>
+          <h4 class="text-muted">No hay entregas pendientes</h4>
         </div>
 
       </ion-col>
@@ -84,12 +84,12 @@
 
     <ion-row *ngIf="deliverys && loadingUsuario">
       <ion-col>
-        <h1 class="ion-padding" *ngIf="deliverys && deliverys.length > 0">Pending deliveries</h1>
+        <h1 class="ion-padding" *ngIf="deliverys && deliverys.length > 0">Repartos pendientes</h1>
 
         <ion-item-sliding *ngFor="let pedido of deliverys" >
           <!-- BOTON IZQUIERDO -->
           <ion-item-options side="start">
-            <ion-item-option (click)="aceptarEntrega(pedido)" color="success">Start</ion-item-option>
+            <ion-item-option (click)="aceptarEntrega(pedido)" color="success">Comenzar</ion-item-option>
           </ion-item-options>
 
           <!-- EL ITEM --> 
@@ -121,7 +121,7 @@
 
           <!-- BOTON DERECHO -->
           <ion-item-options side="end">
-            <ion-item-option (click)="verDelivery(pedido)">View</ion-item-option>
+            <ion-item-option (click)="verDelivery(pedido)">Ver</ion-item-option>
           </ion-item-options>
         </ion-item-sliding>
 

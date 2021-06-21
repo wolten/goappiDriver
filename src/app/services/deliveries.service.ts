@@ -189,7 +189,7 @@ export class DeliveriesService {
       this.navCtrl.navigateRoot('/main/tabs/tab3');
     }
 
-    const vehicle_id = this.vehicle.vehicle_id;
+    const vehicle_id = this.vehicle.tokenx;
     const params = {tokenx, status_delivery, vehicle_id  }
     const headers = new HttpHeaders({ Authorization: 'Bearer ' + this.token });
     return await this.http.post(`${URL}/api/orders/update/delivery`, params, { headers }).toPromise();
